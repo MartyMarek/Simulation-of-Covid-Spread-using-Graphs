@@ -1,0 +1,3 @@
+Directory for simulation outputs.
+
+May not be required.
