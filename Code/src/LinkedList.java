@@ -15,6 +15,7 @@ public class LinkedList<Obj> {
 	private Node<Obj> head;
 	private Node<Obj> tail;
 	
+	//keeps the total length of the linked list (total num of nodes)
 	private int length;
 	
 	//default constructor 
@@ -150,6 +151,43 @@ public class LinkedList<Obj> {
 		
 	}
 	
-	
+	//this method converts the linked list of objects into an array of the same object
+	public SuperArray<Obj> convertToArray() {
+		//if there is nothing to convert return null
+		if (length == 0) {
+			return null;
+		}
+		
+		try {
+			
+			//otherwise, create an array 
+			SuperArray<Obj> array = new SuperArray<Obj>();
+			
+			// create a node pointer and set it to the beginning
+			Node<Obj> pointer = head;
+
+			//now add each node's object into the array
+			while (pointer != null) {
+				array.add(pointer.getValue());
+				pointer = pointer.getNext();
+			}
+			
+			//once we have all the elements, return the array.
+			return array;
+		}
+		catch (ArrayIndexOutOfBoundsException aoe) {
+			//something has gone wrong with the array
+			return null;
+		}
+		catch (NullPointerException npe) {
+			//something has gone wrong with the linked list
+			return null;
+		}
+		catch (Exception e) {
+			//something terrible has happened 
+			return null;
+		}
+	}
+
 
 }

@@ -24,7 +24,7 @@ public class AdjacencyList extends AbstractGraph
 
     } // end of AdjacencyList()
 
-
+    // complete
     public void addVertex(String vertLabel) {
     
     	//create and add a new vertex to the map if vertLabel does not already exist
@@ -40,7 +40,7 @@ public class AdjacencyList extends AbstractGraph
 
     } // end of addVertex()
 
-
+    // complete
     public void addEdge(String srcLabel, String tarLabel) {
         
     	try {
@@ -73,7 +73,7 @@ public class AdjacencyList extends AbstractGraph
     	
     } // end of addEdge()
 
-
+    //need to find out more
     public void toggleVertexState(String vertLabel) {
         // Implement me!
     } // end of toggleVertexState()
@@ -107,7 +107,7 @@ public class AdjacencyList extends AbstractGraph
 	    }
     } // end of deleteEdge()
 
-
+    // complete
     public void deleteVertex(String vertLabel) {
         //we need to delete the vertex from the map and the array
     	
@@ -135,12 +135,67 @@ public class AdjacencyList extends AbstractGraph
     } // end of deleteVertex()
 
 
+    //class cast exception at line 156...................
     public String[] kHopNeighbours(int k, String vertLabel) {
-        // Implement me!
+        
+    	//first, if the vertex given doesn't exist return null
+    	if (!map.containsKey(vertLabel)) {
+    		return null;
+    	}
+    	else if (k <= 0) { //if k is 0 or less return null
+    		return null;
+    	}
+    	else if (k == 1) {
+    		//if k is 1 we can simply return this vertices connections
+    		
+    		//get our index pointer for the vertex 
+    		int index = map.get(vertLabel).getIndexPointer();
+    		
+    		//from the array we get the linked list (using index) convert it to 
+    		//SuperArray then to a basic array and return it 
+    		SuperArray<String> sArray = (SuperArray<String>)adjList.getObject(index).convertToArray();
+    		return sArray.convertToStringArray();	
+    	}
+    	else {  //k is greater than 1
+    		
+    		//create an array to store every node
+    		SuperArray<String> kHop = new SuperArray<String>();
+    		
+    		//run the recursive helper and convert the result to a basic array    		
+    		return recursiveKHop(k, vertLabel, kHop).convertToBasic();
+    	}
 
-        // please update!
-        return null;
     } // end of kHopNeighbours()
+    
+    
+    //recursive khop helper function for k's larger than 1
+    private SuperArray<String> recursiveKHop(int k, String key, SuperArray<String> sArray) {
+    	
+    	if (k == 0) {
+    		return null;
+    	}
+    	else {
+    		//get our index pointer for the vertex 
+    		int index = map.get(key).getIndexPointer();
+    		
+    		//get our linked list for this vertex and iterate through each node
+    		LinkedList<String> list = adjList.getObject(index);
+    		
+    		//get the head node from the linked list
+    		Node<String> iterator = list.getHead();
+    		
+    		while (iterator != null) {
+    			//append this array with what we can back from the recursive call
+    			sArray.append(recursiveKHop(k-1, iterator.getValue(), sArray));
+    			
+    			iterator = iterator.getNext();
+    		}  
+    		
+    		return sArray;
+    		
+    	}
+    	
+    }
 
 
     public void printVertices(PrintWriter os) {
