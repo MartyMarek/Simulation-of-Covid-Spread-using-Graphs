@@ -219,7 +219,8 @@ public class SuperArray<Obj> {
 		}
 	}
 	
-	//This method will remove all duplicate values in this array
+	//This method will remove all duplicate values in this array. Mainly used to delete
+	//duplicates after the khop neighbor algorithm 
 	@SuppressWarnings("unchecked")
 	public String[] deDuplicate() {
 		//if our array is empty or only 1 item return a string array as is
@@ -237,13 +238,17 @@ public class SuperArray<Obj> {
 			deDup = insertionSort(deDup);
 			
 			//now delete the duplicates and re-assign the result to this array
-			
 			deDup = slowDeDup(deDup);
-			
 			array = (Obj[])deDup;			
 		}
 		else {
 			//for large number of items we run a quicksort
+			
+			deDup = quickSort(deDup, 0, deDup.length);
+			
+			//now delete the duplicates and re-assign the result to this array
+			deDup = slowDeDup(deDup);
+			array = (Obj[])deDup;
 		}
 		
 		return deDup;
@@ -258,12 +263,25 @@ public class SuperArray<Obj> {
 		for (i = 1; i < unsorted.length; i++) {
 			j = i;
 			
-			while (j > 0 && (unsorted[j - 1].compareToIgnoreCase(unsorted[j]) > 0) ) {
-				//swap items
-				String temp = unsorted[j - 1];
-				unsorted[j - 1] = unsorted[j];
-				unsorted[j] = temp;
-				j--;
+			try {
+				while (j > 0 && (unsorted[j - 1].compareToIgnoreCase(unsorted[j]) > 0) ) {
+					//swap items
+					String temp = unsorted[j - 1];
+					unsorted[j - 1] = unsorted[j];
+					unsorted[j] = temp;
+					j--;
+				}
+			}
+			catch (NullPointerException npe) {
+				//treat nulls as the higher value so we push them all at the
+				//back of the array
+				if (unsorted[j - 1] == null) {
+					//swap items
+					String temp = unsorted[j - 1];
+					unsorted[j - 1] = unsorted[j];
+					unsorted[j] = temp;
+					j--;
+				}
 			}
 		}
 		
@@ -294,24 +312,65 @@ public class SuperArray<Obj> {
 	}	
 	
 	//this is a helper function that will sort the array based on its values
-	private void quickSort() {
+	private String[] quickSort(String[] array, int low, int high) {
+		
+		if (low < high) {
+			int pivot = getPivotIndex(array, low, high);
+			
+			quickSort(array, low, pivot - 1); // range before the pivot
+			quickSort(array, pivot + 1, high); //range after the pivot
+		}
 		
 		//get the pivot value for the quicksort..
-		
+		return array;
 		
 	}
 	
-	private int getPivotIndex() {
-		//if the array is empty return -1
-		if (totalItems == 0) {
-			return -1;
-		}
-		else {  //otherwise compare the first, middle and last values
+	//This is the helper function to QuickSort that gets a pivot 
+	private int getPivotIndex(String[] array, int low, int high) {
+		
+		String highValue = array[high];
+		
+		int smallIndex = low -1;
+		
+		for (int i = low; i <= high - 1; i++) {
 			
-			
+			//we have to catch a possible nullpointer exception because
+			//our array could have nulls
+			try {
+				//if the current string is smaller
+				if (array[i].compareToIgnoreCase(highValue) < 0) {
+					smallIndex++;
+					
+					//swap the elements
+					String temp = array[smallIndex];
+					
+					array[smallIndex] = array[i];
+					array[i] = temp;
+				}
+			}
+			catch (NullPointerException npe) {
+				//treat null as the larger value so we move all nulls at the back
+				//of the array
+				if (array[i] != null && highValue == null) {
+					smallIndex++;
+					
+					//swap the elements
+					String temp = array[smallIndex];
+					
+					array[smallIndex] = array[i];
+					array[i] = temp;
+				}				
+			}
 		}
 		
-		return 0;
+		//swap elements
+		String temp = array[smallIndex + 1];
+		
+		array[smallIndex + 1] = array[high];
+		array[high] = temp;
+		
+		return (smallIndex + 1);
 		
 	}
 	

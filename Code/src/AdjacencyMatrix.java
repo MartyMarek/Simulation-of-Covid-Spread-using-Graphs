@@ -148,11 +148,95 @@ public class AdjacencyMatrix extends AbstractGraph
 
 
     public String[] kHopNeighbours(int k, String vertLabel) {
-        // Implement me!
-
-        // please update!
-        return null;
+        
+    	SuperArray<String> sArray = new SuperArray<String>();
+    	
+    	//first, if the vertex given doesn't exist then warning to System.err should be issued
+    	if (!map.containsKey(vertLabel)) {
+    		
+    		//issue system error
+    		
+    		//and return a small empty string array 
+    		return new String[1];
+    	}
+    	else if (k <= 0) { //if k is 0 or less return an empty array
+    		return new String[1];
+    	}
+    	else if (k >= 1) {
+    		//run the recursive function
+    		sArray = recursiveKHop(k, vertLabel, sArray);
+    		
+    		return sArray.convertToStringArray();
+    	}
+    	
+    	return new String[1];
+    	
     } // end of kHopNeighbours()
+    
+    private SuperArray<String> recursiveKHop(int k, String key, SuperArray<String> sArray) {
+
+    	if (k == 1) {
+    		
+    		System.out.println("first if where k should be 1 : " + k);
+    		//get the index 
+    		int rowIndex = map.get(key).getIndexPointer();
+    		
+    		//check the value of every column item to see if there is an edge
+    		for (String m: map.keySet()) {
+    			//get the index 
+        		int colIndex = map.get(m).getIndexPointer();
+        		
+        		//we don't need to check for self looping edges
+        		if (rowIndex != colIndex ) {
+        		
+	        		//now check for edges (avoid the null values in our matrix)
+	        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+	    				//if the coordinate at this row an column contains true, then we have an edge
+	        			if(adjMatrix.getObject(rowIndex, colIndex)) {
+	    					sArray.add(m);
+	        				System.out.println(key + " " + m);
+	    				}
+	        		}
+        		}
+    		}
+    		
+    		return sArray;
+    	}
+    	else if (k > 1) {
+    		
+    		
+    		
+    	
+    		//get the index 
+    		int rowIndex = map.get(key).getIndexPointer();
+    		
+    		//check the value of every column item to see if there is an edge
+    		for (String m: map.keySet()) {
+    			//get the index 
+        		int colIndex = map.get(m).getIndexPointer();
+        		
+        		//we don't need to check for self looping edges
+        		if (rowIndex != colIndex ) {
+        		
+	        		//now check for edges (avoid the null values in our matrix)
+	        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+	    				//if the coordinate at this row an column contains true, then we have an edge
+	        			if(adjMatrix.getObject(rowIndex, colIndex)) {
+	        				sArray.append(recursiveKHop(k - 1, m, sArray));
+	    					
+	    					System.out.println(key + " " + m);
+	    				}
+	        		}
+        		}
+    		}
+    		
+    		
+    		return sArray;
+    	}
+    	
+    	return sArray; 
+	
+    }
 
     //complete
     public void printVertices(PrintWriter os) {
@@ -184,7 +268,7 @@ public class AdjacencyMatrix extends AbstractGraph
         		//we can achieve this by looking at only values where row index > column index
         		if (rowIndex > colIndex ) {
         		
-	        		//now check for edges 
+	        		//now check for edges (avoid the null values in our matrix)
 	        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
 	    				if(adjMatrix.getObject(rowIndex, colIndex)) {
 	    					os.println(n + " " + m);
