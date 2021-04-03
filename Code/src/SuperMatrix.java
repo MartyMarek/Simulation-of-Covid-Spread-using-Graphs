@@ -8,6 +8,9 @@ public class SuperMatrix<Obj> {
 	//keeps track of how many rows we have in the matrix
 	private int rowCount;
 	
+	//keeps track of the last row index 
+	private int lastRow;
+	
 	//keeps track of how many columns we have 
 	private int columnCount;
 	
@@ -19,7 +22,9 @@ public class SuperMatrix<Obj> {
 		//Please Note: This is just the allocated storage for the matrix
 		//NOT the actual Matrix size
 		rowCount = 0;
-		columnCount = 10;		
+		columnCount = 10;	
+		
+		lastRow = 0;
 		
 	}
 	
@@ -29,6 +34,8 @@ public class SuperMatrix<Obj> {
 		
 		rowCount = numRows;
 		columnCount = numColumns;
+		
+		lastRow = 0;
 	}
 	
 	//returns the current row index
@@ -52,8 +59,6 @@ public class SuperMatrix<Obj> {
 	//rows and columns start at 0
 	public void setObject(int row, int column, Obj obj) throws ArrayIndexOutOfBoundsException {
 		rows.getObject(row).setObject(column, obj);
-		
-		return;
 	}
 	
 	//add default sized row (10) to the Matrix 
@@ -61,34 +66,62 @@ public class SuperMatrix<Obj> {
 		//adding a row is simple just create a new array and add it
 		SuperArray<Obj> newRow = new SuperArray<Obj>();
 		rows.add(newRow);
+		
+		//if the index we added this last row is larger than our existing last row
+		//need a method in SuperArray to return the last index
+		
+		rowCount++;
 	}
 	
 	//add a row of given size to the matrix 
 	public void addRow(int size) {
 		//adding a row is simple just create a new array and add it
 		SuperArray<Obj> newRow = new SuperArray<Obj>(size);
+		rowCount++;
 	}
 	
+	//deletes an entire row from the matrix (doesn't actually delete it)
+	//it saves it for use by the next added vertex 
+	public void deleteRow(int rowNum) {
+		rows.deleteAtIndex(rowNum);
+		//rowCount--;
+	}
+	
+	//deletes a column from the matrix 
+	public void deleteColumn(int columnNum) {
+		//iterate through each row array and delete the given index
+		for (int i = 0; i < rowCount; i++) {
+			rows.getObject(i).deleteAtIndex(columnNum);
+		}
+	}
 	
 	
 	//Please note: this is for testing purposes only, don't run this with a large matrix
 	public void printMatrix() {
 		
-		int i, j = 0;
+		int i = 0;
+		int j = 0;
 		
-		for (i = 0; i < rows.getTotalItems(); i++) {
-			for (j = 0; j < rows.getObject(i).getLength(); j++) {
-				if (rows.getObject(i).getObject(j) == null ||
-						(Boolean)rows.getObject(i).getObject(j) == false) {
-					System.out.print("0 ");
-					
+		for (i = 0; i < rowCount; i++) {
+			if (rows.getObject(i) != null) {
+				for (j = 0; j < rows.getObject(i).getLength(); j++) {
+					if (rows.getObject(i).getObject(j) == null) {
+						System.out.print("n ");
+					}
+					else if( (Boolean)rows.getObject(i).getObject(j) == false) {
+						System.out.print("0 ");
+					}
+					else {
+						System.out.print("1 ");
+					}
 				}
-				else {
-					System.out.print("1 ");
-				}
+				System.out.println();
 			}
-			System.out.println();
+			else {
+				System.out.println("null"); //print this for null rows 
+			}
 		}
 	}
+	
 
 }

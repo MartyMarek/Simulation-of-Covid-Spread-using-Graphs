@@ -28,7 +28,7 @@ public class AdjacencyMatrix extends AbstractGraph
     	
     } // end of AdjacencyMatrix()
 
-
+    //complete
     public void addVertex(String vertLabel) {
     	//create and add a new vertex to the map if vertLabel does not already exist
     	if (!map.containsKey(vertLabel)) {
@@ -41,7 +41,7 @@ public class AdjacencyMatrix extends AbstractGraph
     	}
     } // end of addVertex()
 
-
+    //complete
     public void addEdge(String srcLabel, String tarLabel) {
     	//don't allow self loops
     	if (srcLabel.equals(tarLabel)) {
@@ -60,10 +60,11 @@ public class AdjacencyMatrix extends AbstractGraph
 	    		int targetIndex = targetVertex.getIndexPointer();
 	    		
 	    		//source is the row and target is the column in our matrix 
-	    		Boolean edge = new Boolean(true);
+	    		Boolean edge = true;
 	    		adjMatrix.setObject(sourceIndex, targetIndex, edge);
 	    		
-	    				    		
+	    		//for the adjacency matrix, we have to mirror the values
+	    		adjMatrix.setObject(targetIndex, sourceIndex, edge);
 	    	}
     	}
 	    catch (ArrayIndexOutOfBoundsException aie) {
@@ -82,14 +83,61 @@ public class AdjacencyMatrix extends AbstractGraph
         // Implement me!
     } // end of toggleVertexState()
 
-
+    //complete
     public void deleteEdge(String srcLabel, String tarLabel) {
-        // Implement me!
+        
+    	//same as add but we set the corresponding value to false
+    	
+    	//self loops don't exist
+    	if (srcLabel.equals(tarLabel)) {
+    		return;
+    	}
+        
+    	try {
+	    	//first we need to check that both labels exist
+	    	if (map.containsKey(srcLabel) && map.containsKey(tarLabel) ) {
+	    		
+	    		//now we get the source vertex and its index in the array
+	    		Vertex sourceVertex = map.get(srcLabel);
+	    		Vertex targetVertex = map.get(tarLabel);
+	    		
+	    		int sourceIndex = sourceVertex.getIndexPointer();
+	    		int targetIndex = targetVertex.getIndexPointer();
+	    		
+	    		//source is the row and target is the column in our matrix 
+	    		Boolean edge = false;
+	    		adjMatrix.setObject(sourceIndex, targetIndex, edge);
+	    		
+	    		//for the adjacency matrix, we have to mirror the values
+	    		adjMatrix.setObject(targetIndex, sourceIndex, edge);
+	    	}
+    	}
+	    catch (ArrayIndexOutOfBoundsException aie) {
+	    	//something went wrong with accessing the array with that index number
+	    }
+    	catch (NullPointerException npe) {
+    		//something went wrong with accessing the linked list
+    	}
+	    catch (Exception e) {
+	    	//Something else has gone wrong
+	    }
+    	
     } // end of deleteEdge()
 
-
+    //complete
     public void deleteVertex(String vertLabel) {
-        // Implement me!
+        
+    	//check if the vertex exists..
+    	if (map.containsKey(vertLabel)) {
+    		
+    		//get the index to delete from the matrix
+    		int index = map.get(vertLabel).getIndexPointer();
+    		
+    		//delete both the row and column reference from the matrix
+    		adjMatrix.deleteColumn(index);
+    		adjMatrix.deleteRow(index);
+
+    	}
     } // end of deleteVertex()
 
 
