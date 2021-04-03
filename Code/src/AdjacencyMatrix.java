@@ -79,8 +79,14 @@ public class AdjacencyMatrix extends AbstractGraph
     } // end of addEdge()
 
 
+    //complete
     public void toggleVertexState(String vertLabel) {
-        // Implement me!
+    	//check if the vertex exists..
+    	if (map.containsKey(vertLabel)) {
+    		
+    		//toggle to the next SIR state
+    		map.get(vertLabel).toggleState(); 
+    	}
     } // end of toggleVertexState()
 
     //complete
@@ -148,20 +154,53 @@ public class AdjacencyMatrix extends AbstractGraph
         return null;
     } // end of kHopNeighbours()
 
-
+    //complete
     public void printVertices(PrintWriter os) {
-    	//testing only right now
+    	
     	for (String n: map.keySet()) {
-    		System.out.print(n + " ");
-    		System.out.print(map.get(n).getIndexPointer() + " ");
-    		System.out.println(map.get(n).getState().toString());
+    		os.print("(" + n + "," + map.get(n).getState().toString() + ") ");
     		
+    		//FOR TESTING ONLY
+    		System.out.print("(" + n + "," + map.get(n).getState().toString() + ") ");
     	}
+    	
+    	os.println();
+
     } // end of printVertices()
 
-
+    //complete
     public void printEdges(PrintWriter os) {
-        adjMatrix.printMatrix();
+        
+    	for (String n: map.keySet()) {
+    		
+    		//get the index 
+    		int rowIndex = map.get(n).getIndexPointer();
+    		
+    		for (String m: map.keySet()) {
+    			//get the index 
+        		int colIndex = map.get(m).getIndexPointer();
+        		
+        		//as the adjacency matrix is a mirror we  only need one side of it
+        		//we can achieve this by looking at only values where row index > column index
+        		if (rowIndex > colIndex ) {
+        		
+	        		//now check for edges 
+	        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+	    				if(adjMatrix.getObject(rowIndex, colIndex)) {
+	    					os.println(n + " " + m);
+	    					
+	    					//FOR TESTING ONLY
+	        				System.out.println(n + " " + m);
+	    				}
+	    			}
+        		}
+        		
+    		}
+
+    	}
+
     } // end of printEdges()
+    
+    
 
 } // end of class AdjacencyMatrix

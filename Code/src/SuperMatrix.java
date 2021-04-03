@@ -55,6 +55,11 @@ public class SuperMatrix<Obj> {
 		return rows.getObject(row).getObject(column);
 	}
 	
+	//return an entire row based on a given row index
+	public SuperArray<Obj> getRow(int index) {
+		return rows.getObject(index);
+	}
+	
 	//sets the object at a given row/column
 	//rows and columns start at 0
 	public void setObject(int row, int column, Obj obj) throws ArrayIndexOutOfBoundsException {

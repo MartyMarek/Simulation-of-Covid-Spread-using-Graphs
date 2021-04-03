@@ -81,7 +81,12 @@ public class AdjacencyList extends AbstractGraph
 
     //need to find out more
     public void toggleVertexState(String vertLabel) {
-        // Implement me!
+    	//check if the vertex exists..
+    	if (map.containsKey(vertLabel)) {
+    		
+    		//toggle to the next SIR state
+    		map.get(vertLabel).toggleState(); 
+    	}
     } // end of toggleVertexState()
 
     //could have bugs: in some rare cases edges are not removed from list when vertex is deleted.
@@ -216,36 +221,36 @@ public class AdjacencyList extends AbstractGraph
     	
     }
 
-
+    //complete
     public void printVertices(PrintWriter os) {
         
-    	//testing only right now
     	for (String n: map.keySet()) {
-    		System.out.print(n + " ");
-    		System.out.print(map.get(n).getIndexPointer() + " ");
-    		System.out.println(map.get(n).getState().toString());
+    		os.print("(" + n + "," + map.get(n).getState().toString() + ") ");
     		
+    		//FOR TESTING ONLY
+    		System.out.print("(" + n + "," + map.get(n).getState().toString() + ") ");
     	}
-
+    	
+    	os.println();
     	
     } // end of printVertices()
 
-
+    //complete
     public void printEdges(PrintWriter os) {
-        // Testing only
+        
     	for (String n: map.keySet()) {
     		LinkedList<String> printList = adjList.getObject(map.get(n).getIndexPointer());
-    		System.out.print("Key: " + n + " ");
-    		System.out.print("Index: " + map.get(n).getIndexPointer() + " Edges: ");
     		Node<String> printNode = printList.getHead();
     		
     		while (printNode != null) {
-    			System.out.print(printNode.getValue() + ", ");
+    			os.println(n + " " + printNode.getValue());
+    			
+    			System.out.println(n + " " + printNode.getValue());  //TESTING ONLY
+    			
     			printNode = printNode.getNext();
     		}
-    		
-    		System.out.println("");    		
     	}
+
     } // end of printEdges()
 
 } // end of class AdjacencyList

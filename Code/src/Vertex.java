@@ -49,5 +49,18 @@ public class Vertex {
 	public int getIndexPointer() {
 		return indexPointer;
 	}
+	
+	//this method toggles the state enum from S to I to R. 
+	//once on R it stays on R
+	public void toggleState() {
+		
+		if (state == SIRState.S) {
+			state = SIRState.I;
+		}
+		else if (state == SIRState.I) {
+			state = SIRState.R;
+		}
+		
+	}
 
 }
