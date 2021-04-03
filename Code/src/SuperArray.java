@@ -45,6 +45,18 @@ public class SuperArray<Obj> {
 		deletedIndexList = new LinkedList<Integer>();
 	}
 	
+	@SuppressWarnings("unchecked")
+	//constructor that creates an array of given size
+	public SuperArray(int size) throws NegativeArraySizeException {
+		currentIndex = 0;
+		totalItems = 0;
+
+		//initialise the array with our initial size 
+		array = (Obj[])new Object[size];
+		
+		deletedIndexList = new LinkedList<Integer>();
+	}
+	
 	//adds a new object to the array (at the next available slot)
 	public void add(Obj obj) {
 		
@@ -105,6 +117,10 @@ public class SuperArray<Obj> {
 	
 	public Obj getObject(int index) throws ArrayIndexOutOfBoundsException {
 		return array[index];
+	}
+	
+	public void setObject(int index, Obj obj) throws ArrayIndexOutOfBoundsException {
+		array[index] = obj;
 	}
 	
 	//returns the total length of the array
@@ -256,7 +272,7 @@ public class SuperArray<Obj> {
 	
 	//helper function to de-duplicate a sorted array
 	//PLEASE NOTE: this is using brute force as not sure if we can use a HashSet here (which is preferable)
-	public String[] slowDeDup(String[] duplicates) {
+	private String[] slowDeDup(String[] duplicates) {
 		//create a target string array
 		String[] target = new String[duplicates.length];
 		
