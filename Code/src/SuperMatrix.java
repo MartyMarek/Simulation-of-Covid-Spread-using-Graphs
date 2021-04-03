@@ -1,4 +1,15 @@
-
+/*************************************************************************************************************
+ * Generic Class: SuperMatrix
+ * Description:
+ * SuperMatrix is a generic class that leverages SuperArray to build a 2 dimensional array (matrix). The Matrix can be
+ * symmetrical or asymmetrical - this is set by using the corresponding constructor of this class. 
+ * The class includes a test method that prints the contents of the backend storage (Which is bigger than the actual matrix itself),
+ * however, this method should not be used for other than testing purposes. 
+ * 
+ * @author Team #23
+ *
+ * @param <Obj>
+ */
 public class SuperMatrix<Obj> {
 	
 	//a matrix is an array of arrays (ie rows and columns)
