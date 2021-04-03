@@ -153,9 +153,9 @@ public class LinkedList<Obj> {
 	
 	//this method converts the linked list of objects into an array of the same object
 	public SuperArray<Obj> convertToArray() {
-		//if there is nothing to convert return null
+		//if there is nothing to convert return empty array
 		if (length == 0) {
-			return null;
+			return new SuperArray<Obj>();
 		}
 		
 		try {

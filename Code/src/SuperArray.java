@@ -99,6 +99,10 @@ public class SuperArray<Obj> {
 		return currentIndex;
 	}
 	
+	public int getTotalItems() {
+		return totalItems;
+	}
+	
 	public Obj getObject(int index) throws ArrayIndexOutOfBoundsException {
 		return array[index];
 	}
@@ -123,9 +127,10 @@ public class SuperArray<Obj> {
 	//and convert the generic object array into a string array
 	public String[] convertToStringArray() {
 		
-		//first if we have an empty array return null
+		//first if we have an empty array return an empty array
 		if (array.length == 0) {
-			return null;   // could return empty string[] here instead. 
+			String[] emptyList = new String[initialIndexSize];
+			return emptyList; 
 		}
 		
 		//create an array with the exact number of items we need
@@ -147,7 +152,7 @@ public class SuperArray<Obj> {
 			if (array[indexPointer] != null) {
 				//convert the object to a string and assign it to our new array
 				//increment both index pointers afterwards
-				stringList[newIndexPointer++] = (String)array[indexPointer++];
+				stringList[newIndexPointer++] = array[indexPointer++].toString(); 
 				
 				//also increment itemCount
 				itemCount++;
@@ -164,17 +169,22 @@ public class SuperArray<Obj> {
 	
 	
 	//appends a SuperArray to this array.
-	//Both MUST contain the same object type, Duplicates are ignored, Order is ignored 
+	//Both MUST contain the same object type, 
+	//Duplicates are NOT CHECKED (therefore added)
+	//Order is ignored 
 	public void append(SuperArray<Obj> newArray) {
+
+		int totalCounter = 0;
 		
 		//if we get a null input, do nothing
 		if (newArray == null) {
 			return;
 		}
 		
-		//we must iterate the whole array because there could be nulls in the middle of the array
-		//one way to fix this is the keep track of how many items we have in each super array
-		//and stop iterating once we reach that amount 
+		//if we get an empty super array, do nothing
+		if (newArray.getTotalItems() == 0) {
+			return;
+		}
 		
 		for (int i = 0; i < newArray.getLength(); i++) {
 			
@@ -183,10 +193,113 @@ public class SuperArray<Obj> {
 			//if the object we got from the array is not null then add it to our array
 			if (nextObj != null) {
 				this.add(nextObj);
+				totalCounter++;
+			}
+			
+			//now check if we have reached our total items
+			if (totalCounter == newArray.getTotalItems()) {
+				return;
+			}
+		}
+	}
+	
+	//This method will remove all duplicate values in this array
+	@SuppressWarnings("unchecked")
+	public String[] deDuplicate() {
+		//if our array is empty or only 1 item return a string array as is
+		if (totalItems == 0 || totalItems == 1) {
+			return this.convertToStringArray();
+		}
+		
+		//first we convert the array into a string array, this also gets rid of NULL values 
+		String[] deDup = this.convertToStringArray();
+		
+		//depending on how many items we have in the array, run different sort algo's
+		// need to identify what the optimal value is to make decision. 
+		if (totalItems < 10) {
+			//run an insertion sort
+			deDup = insertionSort(deDup);
+			
+			//now delete the duplicates and re-assign the result to this array
+			
+			deDup = slowDeDup(deDup);
+			
+			array = (Obj[])deDup;			
+		}
+		else {
+			//for large number of items we run a quicksort
+		}
+		
+		return deDup;
+
+	}
+	
+	// standard insertion sort to be used for sorting small arrays of strings
+	private String[] insertionSort(String[] unsorted) {
+		
+		int j, i = 1;
+		
+		for (i = 1; i < unsorted.length; i++) {
+			j = i;
+			
+			while (j > 0 && (unsorted[j - 1].compareToIgnoreCase(unsorted[j]) > 0) ) {
+				//swap items
+				String temp = unsorted[j - 1];
+				unsorted[j - 1] = unsorted[j];
+				unsorted[j] = temp;
+				j--;
 			}
 		}
 		
+		return unsorted;
 	}
+	
+	//helper function to de-duplicate a sorted array
+	//PLEASE NOTE: this is using brute force as not sure if we can use a HashSet here (which is preferable)
+	public String[] slowDeDup(String[] duplicates) {
+		//create a target string array
+		String[] target = new String[duplicates.length];
+		
+		int i, j = 0;
+		
+		for (i = 0; i < (duplicates.length - 1); i++) {  //we don't need to compare the last value
+			
+			//check if the current index value is equal to the next one
+			if (!duplicates[i].equals(duplicates[i + 1])) {
+				//if it does not equal save the value to the target array
+				target[j++] = duplicates[i];
+			}
+		}
+		
+		//now assign the last element
+		target[j] = duplicates[duplicates.length - 1];
+		
+		return target;
+	}	
+	
+	//this is a helper function that will sort the array based on its values
+	private void quickSort() {
+		
+		//get the pivot value for the quicksort..
+		
+		
+	}
+	
+	private int getPivotIndex() {
+		//if the array is empty return -1
+		if (totalItems == 0) {
+			return -1;
+		}
+		else {  //otherwise compare the first, middle and last values
+			
+			
+		}
+		
+		return 0;
+		
+	}
+	
+	
 	
 	//this method will double the size of the internal array when called
 	private void expandArray() {

@@ -1,4 +1,5 @@
 import java.io.PrintWriter;
+import java.util.HashSet;
 
 
 /**
@@ -42,6 +43,11 @@ public class AdjacencyList extends AbstractGraph
 
     // complete
     public void addEdge(String srcLabel, String tarLabel) {
+    	
+    	//don't allow self loops
+    	if (srcLabel.equals(tarLabel)) {
+    		return;
+    	}
         
     	try {
 	    	//first we need to check that both labels exist
@@ -135,18 +141,22 @@ public class AdjacencyList extends AbstractGraph
     } // end of deleteVertex()
 
 
-    //class cast exception at line 156...................
+    //complete
     public String[] kHopNeighbours(int k, String vertLabel) {
         
-    	//first, if the vertex given doesn't exist return null
+    	//first, if the vertex given doesn't exist then warning to System.err should be issued
     	if (!map.containsKey(vertLabel)) {
-    		return null;
+    		
+    		//issue system error
+    		
+    		//and return a small empty string array 
+    		return new String[1];
     	}
-    	else if (k <= 0) { //if k is 0 or less return null
-    		return null;
+    	else if (k <= 0) { //if k is 0 or less return an empty array
+    		return new String[1];
     	}
     	else if (k == 1) {
-    		//if k is 1 we can simply return this vertices connections
+    		//if k is 1 we can simply return this vertex's connections
     		
     		//get our index pointer for the vertex 
     		int index = map.get(vertLabel).getIndexPointer();
@@ -161,32 +171,41 @@ public class AdjacencyList extends AbstractGraph
     		//create an array to store every node
     		SuperArray<String> kHop = new SuperArray<String>();
     		
-    		//run the recursive helper and convert the result to a basic array    		
-    		return recursiveKHop(k, vertLabel, kHop).convertToBasic();
+    		//run the recursive helper and convert the result to a basic string array
+    		
+    		//need to de-duplicate any values in the super array first...
+    		kHop.deDuplicate();
+    		
+    		return recursiveKHop(k, vertLabel, kHop).convertToStringArray();
     	}
 
     } // end of kHopNeighbours()
     
-    
+    /* Additional Helper Function */
     //recursive khop helper function for k's larger than 1
     private SuperArray<String> recursiveKHop(int k, String key, SuperArray<String> sArray) {
     	
     	if (k == 0) {
-    		return null;
+    		return sArray; //return array without any changes
     	}
     	else {
     		//get our index pointer for the vertex 
     		int index = map.get(key).getIndexPointer();
     		
-    		//get our linked list for this vertex and iterate through each node
+    		//get our linked list for this vertex, add their values to the array 
+    		//then iterate through each node
     		LinkedList<String> list = adjList.getObject(index);
+    		
+    		//convert the linkedlist to a super array and append it to our array
+    		//NOTE: append ignores duplicates
+    		sArray.append(list.convertToArray());
     		
     		//get the head node from the linked list
     		Node<String> iterator = list.getHead();
     		
     		while (iterator != null) {
-    			//append this array with what we can back from the recursive call
-    			sArray.append(recursiveKHop(k-1, iterator.getValue(), sArray));
+    			//call the method again with the next value in the list
+    			recursiveKHop(k-1, iterator.getValue(), sArray);
     			
     			iterator = iterator.getNext();
     		}  
@@ -207,6 +226,7 @@ public class AdjacencyList extends AbstractGraph
     		System.out.println(map.get(n).getState().toString());
     		
     	}
+
     	
     } // end of printVertices()
 
