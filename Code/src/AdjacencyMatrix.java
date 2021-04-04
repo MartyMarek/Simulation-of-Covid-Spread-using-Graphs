@@ -283,33 +283,42 @@ public class AdjacencyMatrix extends AbstractGraph
     //complete
     public void printEdges(PrintWriter os) {
         
-    	for (String n: map.keySet()) {
-    		
-    		//get the index 
-    		int rowIndex = map.get(n).getIndexPointer();
-    		
-    		for (String m: map.keySet()) {
-    			//get the index 
-        		int colIndex = map.get(m).getIndexPointer();
-        		
-        		//as the adjacency matrix is a mirror we  only need one side of it
-        		//we can achieve this by looking at only values where row index > column index
-        		if (rowIndex > colIndex ) {
-        		
-	        		//now check for edges (avoid the null values in our matrix)
-	        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
-	    				if(adjMatrix.getObject(rowIndex, colIndex)) {
-	    					os.println(n + " " + m);
-	    					
-	    					//FOR TESTING ONLY
-	        				System.out.println(n + " " + m);
-	    				}
-	    			}
-        		}
-        		
-    		}
-
+    	int rowIndex = 0;
+		int colIndex = 0;
+    	
+    	try {
+	    	for (String n: map.keySet()) {
+	    		
+	    		//get the index 
+	    		rowIndex = map.get(n).getIndexPointer();
+	    		
+	    		for (String m: map.keySet()) {
+	    			//get the index 
+	        		colIndex = map.get(m).getIndexPointer();
+	        		
+	        		//as the adjacency matrix is a mirror we  only need one side of it
+	        		//we can achieve this by looking at only values where row index > column index
+	        		if (rowIndex > colIndex ) {
+	        		
+		        		//now check for edges (avoid the null values in our matrix)
+		        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    				if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    					os.println(n + " " + m);
+		    					
+		    					//FOR TESTING ONLY
+		        				System.out.println(n + " " + m);
+		    				}
+		    			}
+	        		}
+	        		
+	    		}
+	
+	    	}
     	}
+    	catch (ArrayIndexOutOfBoundsException ae) {
+	    		
+    		System.out.println("Row Index: " +  rowIndex + " Column Index: " + colIndex + " does not exist in Matrix");
+	    }
 
     } // end of printEdges()
     
