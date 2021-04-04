@@ -93,9 +93,6 @@ public class SuperMatrix<Obj> {
 	public void addRow(int size) {
 		//adding a row is simple just create a new array and add it
 		SuperArray<Obj> newRow = new SuperArray<Obj>(size);
-		
-		rows.add(newRow);
-		
 		rowCount++;
 	}
 	

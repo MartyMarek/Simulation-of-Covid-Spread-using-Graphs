@@ -101,20 +101,6 @@ public class SuperArray<Obj> {
 		totalItems--;
 	}
 	
-	public int[] getLiveIndexList() {
-		SuperArray<Integer> list = new SuperArray<Integer>();
-		
-		for (int i = 0; i < array.length; i++) {
-			if (array[i] != null) {
-				list.add(i);
-			}
-		}
-		
-		return list.convertToIntArray();
-	}
-	
-	
-	
 	public int getCurrentIndex() {
 		//check if the deletedIndexList has items
 		if (deletedIndexList.getLength() > 0) {
@@ -194,49 +180,6 @@ public class SuperArray<Obj> {
 		}
 		
 		return stringList;
-		
-	}
-	
-	
-	public int[] convertToIntArray() {
-		
-		//first if we have an empty array return an empty array
-		if (array.length == 0) {
-			int[] emptyList = new int[initialIndexSize];
-			return emptyList; 
-		}
-		
-		//create an array with the exact number of items we need
-		int[] intList = new int[totalItems];
-		
-		//to do a clean up we must get rid of any potential
-		//nulls in the middle of the array. to do that we can iterate
-		//through the array cast the object into a string and add it to stringList
-		
-		int indexPointer = 0;
-		int itemCount = 0;
-		int newIndexPointer = 0;
-		
-		//we can terminate as soon as we have all the items or if we have
-		//reached the end of the array 
-		while (indexPointer < array.length && itemCount < totalItems) {
-			
-			//check if the next slot is null 
-			if (array[indexPointer] != null) {
-				//convert the object to a string and assign it to our new array
-				//increment both index pointers afterwards
-				intList[newIndexPointer++] = Integer.parseInt(array[indexPointer++].toString()); 
-				
-				//also increment itemCount
-				itemCount++;
-			}
-			else {
-				//ignore the null value and increment the indexPointer
-				indexPointer++;
-			}
-		}
-		
-		return intList;
 		
 	}
 	
