@@ -228,11 +228,11 @@ public class AdjacencyList extends AbstractGraph
     		os.print("(" + n + "," + map.get(n).getState().toString() + ") ");
     		
     		//FOR TESTING ONLY
-    		System.out.print("(" + n + "," + map.get(n).getState().toString() + ") ");
+    		//System.out.print("(" + n + "," + map.get(n).getState().toString() + ") ");
+
     	}
     	
     	os.println();
-    	
     } // end of printVertices()
 
     //complete
@@ -245,7 +245,7 @@ public class AdjacencyList extends AbstractGraph
     		while (printNode != null) {
     			os.println(n + " " + printNode.getValue());
     			
-    			System.out.println(n + " " + printNode.getValue());  //TESTING ONLY
+    			//System.out.println(n + " " + printNode.getValue());  //TESTING ONLY
     			
     			printNode = printNode.getNext();
     		}
