@@ -142,6 +142,9 @@ public class AdjacencyMatrix extends AbstractGraph
     		//delete both the row and column reference from the matrix
     		adjMatrix.deleteColumn(index);
     		adjMatrix.deleteRow(index);
+    		
+    		//now delete it from the map
+    		map.remove(vertLabel);
 
     	}
     } // end of deleteVertex()
@@ -164,7 +167,7 @@ public class AdjacencyMatrix extends AbstractGraph
     	}
     	else if (k >= 1) {
     		//run the recursive function
-    		sArray = recursiveKHop(k, vertLabel, sArray);
+    		sArray = recursiveKHop(k, vertLabel, null, sArray);
     		
     		return sArray.convertToStringArray();
     	}
@@ -173,11 +176,12 @@ public class AdjacencyMatrix extends AbstractGraph
     	
     } // end of kHopNeighbours()
     
-    private SuperArray<String> recursiveKHop(int k, String key, SuperArray<String> sArray) {
+    
+    //this function needs to be re-factored. It's currently over complicated 
+    private SuperArray<String> recursiveKHop(int k, String key, String exclusion, SuperArray<String> sArray) {
 
     	if (k == 1) {
     		
-    		System.out.println("first if where k should be 1 : " + k);
     		//get the index 
     		int rowIndex = map.get(key).getIndexPointer();
     		
@@ -187,26 +191,38 @@ public class AdjacencyMatrix extends AbstractGraph
         		int colIndex = map.get(m).getIndexPointer();
         		
         		//we don't need to check for self looping edges
-        		if (rowIndex != colIndex ) {
+        		if (rowIndex != colIndex) {
+        			
+        			//if exclusion is null keep going
+        			if (exclusion == null) {
+        				//now check for edges (avoid the null values in our matrix)
+    	        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+    	    				//if the coordinate at this row an column contains true, then we have an edge
+    	        			if(adjMatrix.getObject(rowIndex, colIndex)) {
+    	    					sArray.add(m);
+
+    	    				}
+    	        		}
+        			}
+        			else if (!exclusion.equals(m)) {  //we need to exclude the column that called this function
+        				//now check for edges (avoid the null values in our matrix)
+    	        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+    	    				//if the coordinate at this row an column contains true, then we have an edge
+    	        			if(adjMatrix.getObject(rowIndex, colIndex)) {
+    	    					sArray.add(m);
+
+    	    				}
+    	        		}
+        			}
         		
-	        		//now check for edges (avoid the null values in our matrix)
-	        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
-	    				//if the coordinate at this row an column contains true, then we have an edge
-	        			if(adjMatrix.getObject(rowIndex, colIndex)) {
-	    					sArray.add(m);
-	        				System.out.println(key + " " + m);
-	    				}
-	        		}
+	        		
         		}
     		}
     		
     		return sArray;
     	}
     	else if (k > 1) {
-    		
-    		
-    		
-    	
+
     		//get the index 
     		int rowIndex = map.get(key).getIndexPointer();
     		
@@ -217,20 +233,32 @@ public class AdjacencyMatrix extends AbstractGraph
         		
         		//we don't need to check for self looping edges
         		if (rowIndex != colIndex ) {
+        			//if exclusion is null keep going
+        			if (exclusion == null) {
         		
-	        		//now check for edges (avoid the null values in our matrix)
-	        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
-	    				//if the coordinate at this row an column contains true, then we have an edge
-	        			if(adjMatrix.getObject(rowIndex, colIndex)) {
-	        				sArray.append(recursiveKHop(k - 1, m, sArray));
-	    					
-	    					System.out.println(key + " " + m);
-	    				}
-	        		}
+		        		//now check for edges (avoid the null values in our matrix)
+		        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    				//if the coordinate at this row an column contains true, then we have an edge
+		        			if(adjMatrix.getObject(rowIndex, colIndex)) {
+		        				sArray.add(m);
+		        				recursiveKHop(k - 1, m, key, sArray);
+		    				}
+		        		}
+        			}
+        			else if (!exclusion.equals(m)) {  //we need to exclude the column that called this function
+        				//now check for edges (avoid the null values in our matrix)
+		        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    				//if the coordinate at this row an column contains true, then we have an edge
+		        			if(adjMatrix.getObject(rowIndex, colIndex)) {
+		        				sArray.add(m);
+		        				recursiveKHop(k - 1, m, key, sArray);
+		    				}
+		        		}
+        			}
+        			
         		}
     		}
-    		
-    		
+
     		return sArray;
     	}
     	
