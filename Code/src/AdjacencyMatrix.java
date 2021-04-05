@@ -39,12 +39,18 @@ public class AdjacencyMatrix extends AbstractGraph
     		adjMatrix.addRow();
 
     	}
+    	else {
+    		//issue system error
+    		System.err.println("> Vertex does not exists!");
+    	}
     } // end of addVertex()
 
     //complete
     public void addEdge(String srcLabel, String tarLabel) {
     	//don't allow self loops
     	if (srcLabel.equals(tarLabel)) {
+    		//issue system error
+    		System.err.println("> Self loops are not accepted!");
     		return;
     	}
         
@@ -66,6 +72,10 @@ public class AdjacencyMatrix extends AbstractGraph
 	    		//for the adjacency matrix, we have to mirror the values
 	    		adjMatrix.setObject(targetIndex, sourceIndex, edge);
 	    	}
+	    	else {
+	    		//issue system error
+	    		System.err.println("> Vertex does not exists! Edge NOT added.");
+	    	}
     	}
 	    catch (ArrayIndexOutOfBoundsException aie) {
 	    	//something went wrong with accessing the array with that index number
@@ -86,6 +96,10 @@ public class AdjacencyMatrix extends AbstractGraph
     		
     		//toggle to the next SIR state
     		map.get(vertLabel).toggleState(); 
+    	}
+    	else {
+    		//issue system error
+    		System.err.println("> Vertex does not exists!");
     	}
     } // end of toggleVertexState()
 
@@ -117,6 +131,10 @@ public class AdjacencyMatrix extends AbstractGraph
 	    		//for the adjacency matrix, we have to mirror the values
 	    		adjMatrix.setObject(targetIndex, sourceIndex, edge);
 	    	}
+	    	else {
+	    		//issue system error
+	    		System.err.println("> Vertex does not exists!");
+	    	}
     	}
 	    catch (ArrayIndexOutOfBoundsException aie) {
 	    	//something went wrong with accessing the array with that index number
@@ -133,49 +151,155 @@ public class AdjacencyMatrix extends AbstractGraph
     //complete
     public void deleteVertex(String vertLabel) {
         
-    	//check if the vertex exists..
-    	if (map.containsKey(vertLabel)) {
-    		
-    		//get the index to delete from the matrix
-    		int index = map.get(vertLabel).getIndexPointer();
-    		
-    		//delete both the row and column reference from the matrix
-    		adjMatrix.deleteColumn(index);
-    		adjMatrix.deleteRow(index);
-    		
-    		//now delete it from the map
-    		map.remove(vertLabel);
-
+    	try {
+	    	//check if the vertex exists..
+	    	if (map.containsKey(vertLabel)) {
+	    		
+	    		//get the index to delete from the matrix
+	    		int index = map.get(vertLabel).getIndexPointer();
+	    		
+	    		//delete both the row and column reference from the matrix
+	    		adjMatrix.deleteColumn(index);
+	    		adjMatrix.deleteRow(index);
+	    		
+	    		//now delete it from the map
+	    		map.remove(vertLabel);
+	
+	    	}
+	    	else {
+	    		//issue system error
+	    		System.err.println("> Vertex does not exists!");
+	    	}
+    	}
+    	catch (NullPointerException npe) {
+    		System.err.println("> Vertex does not exists!");
+    		return;
+    	}
+    	catch (Exception e) {
+    		System.err.println(e.getMessage());
     	}
     } // end of deleteVertex()
 
 
     public String[] kHopNeighbours(int k, String vertLabel) {
         
-    	SuperArray<String> sArray = new SuperArray<String>();
-    	
-    	//first, if the vertex given doesn't exist then warning to System.err should be issued
-    	if (!map.containsKey(vertLabel)) {
-    		
-    		//issue system error
-    		
-    		//and return a small empty string array 
-    		return new String[1];
+    	try {
+	    	SuperArray<String> sArray;
+	    	
+	    	LinkedList<String> list = new LinkedList<String>();
+	    	
+	    	//first, if the vertex given doesn't exist then warning to System.err should be issued
+	    	if (!map.containsKey(vertLabel)) {
+	    		
+	    		//issue system error
+	    		System.err.println("> Vertex does not exists!");
+	    		
+	    		//and return a small empty string array 
+	    		return new String[0];
+	    	}
+	    	else if (k <= 0) { //if k is 0 or less return an empty array
+	    		return new String[0];
+	    	}
+	    	else if (k >= 1) {
+	    		//run the recursive function
+	    		//sArray = recursiveKHop(k, vertLabel, null, sArray);
+	    		
+	    		recursiveHop(k, vertLabel, list);
+	    		
+	    		/************ POSSIBLE PERFORMANCE OPTIMISATION ************/ 
+	    		//the deduplicate() will remove any duplicate vertex names and return a string[]
+	    		//need to trial whether checking for duplicates in the
+	    		//linkedin function before adding each node is faster
+	    		//return list.convertToArray().deDuplicate();
+	    		sArray = list.convertToArray();
+	    		
+	    		sArray.deleteAll(vertLabel);
+	    		
+	    		return sArray.deDuplicate();
+
+	    	}
+	    	
+	    	return new String[0];
     	}
-    	else if (k <= 0) { //if k is 0 or less return an empty array
-    		return new String[1];
+    	catch (NullPointerException npe) {
+    		//if we are passed a null string do nothing
+    		return new String[0];
     	}
-    	else if (k >= 1) {
-    		//run the recursive function
-    		sArray = recursiveKHop(k, vertLabel, null, sArray);
-    		
-    		return sArray.convertToStringArray();
-    	}
-    	
-    	return new String[1];
+    	catch (Exception e) {
+    		//unknown error
+    		System.err.println(e.getMessage());
+    		return new String[0];
+    	} 
     	
     } // end of kHopNeighbours()
     
+    private void recursiveHop(int k, String key, LinkedList<String> list) {
+    	
+    	if (k == 1) {
+    		
+    		//get the index 
+    		int rowIndex = map.get(key).getIndexPointer();
+    		
+    		//check the value of every column item to see if there is an edge
+    		for (String m: map.keySet()) {
+    			
+    			//exclude thyself
+    			if (!m.equals(key)) {
+    				
+    				int colIndex = map.get(m).getIndexPointer();
+    				
+    				//we draw a diagonal line from (1,1) to (n,n) and only
+    				//look at values above that line
+    				//if (colIndex > rowIndex) {
+    				
+	    				//now check for edges (avoid the null values in our matrix)
+		        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    				//if the coordinate at this row an column contains true, then we have an edge
+		        			if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    					//add to the linkedlist
+		        				list.addNode(m);
+	
+		    				}
+		        		}
+    				//}
+    				
+    			}
+    		}
+    		
+    	}
+    	
+    	else { //if k is higher than 1
+
+    		//get the index 
+    		int rowIndex = map.get(key).getIndexPointer();
+    		
+    		//check the value of every column item to see if there is an edge
+    		for (String m: map.keySet()) {
+    			
+    			//exclude thyself
+    			if (!m.equals(key)) {
+    				
+    				int colIndex = map.get(m).getIndexPointer();
+    				
+    				//we draw a diagonal line from (1,1) to (n,n) and only
+    				//look at values above that line
+    				if (colIndex > rowIndex) {
+    				
+	    				//now check for edges (avoid the null values in our matrix)
+		        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    				//if the coordinate at this row an column contains true, then we have an edge
+		        			if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    					//add to the linkedlist recursively 
+		        				list.addNode(m);
+		        				recursiveHop(k - 1, m, list);
+		    				}
+		        		}
+    				}
+    			}
+    		}
+    	}
+    	
+    }
     
     //this function needs to be re-factored. It's currently over complicated 
     private SuperArray<String> recursiveKHop(int k, String key, String exclusion, SuperArray<String> sArray) {
@@ -231,7 +355,7 @@ public class AdjacencyMatrix extends AbstractGraph
     			//get the index 
         		int colIndex = map.get(m).getIndexPointer();
         		
-        		//we don't need to check for self looping edges
+        		//we need to check for self looping edges
         		if (rowIndex != colIndex ) {
         			//if exclusion is null keep going
         			if (exclusion == null) {
@@ -271,9 +395,6 @@ public class AdjacencyMatrix extends AbstractGraph
     	
     	for (String n: map.keySet()) {
     		os.print("(" + n + "," + map.get(n).getState().toString() + ") ");
-    		
-    		//FOR TESTING ONLY
-    		System.out.print("(" + n + "," + map.get(n).getState().toString() + ") ");
     	}
     	
     	os.println();
@@ -296,29 +417,18 @@ public class AdjacencyMatrix extends AbstractGraph
 	    			//get the index 
 	        		colIndex = map.get(m).getIndexPointer();
 	        		
-	        		//as the adjacency matrix is a mirror we  only need one side of it
-	        		//we can achieve this by looking at only values where row index > column index
-	        		if (rowIndex > colIndex ) {
-	        		
-		        		//now check for edges (avoid the null values in our matrix)
-		        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
-		    				if(adjMatrix.getObject(rowIndex, colIndex)) {
-		    					os.println(n + " " + m);
-		    					
-		    					//FOR TESTING ONLY
-		        				System.out.println(n + " " + m);
-		    				}
+		        	//now check for edges (avoid the null values in our matrix)
+		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    			if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    				os.println(n + " " + m);
 		    			}
-	        		}
-	        		
+		    		}
 	    		}
-	
 	    	}
     	}
     	catch (ArrayIndexOutOfBoundsException ae) {
-	    		
-    		System.out.println("Row Index: " +  rowIndex + " Column Index: " + colIndex + " does not exist in Matrix");
-	    }
+    		System.err.println("> Internal Array Access Error. BAD");
+    	}
 
     } // end of printEdges()
     

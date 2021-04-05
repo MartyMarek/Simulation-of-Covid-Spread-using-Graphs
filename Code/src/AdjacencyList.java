@@ -1,5 +1,4 @@
 import java.io.PrintWriter;
-import java.util.HashSet;
 
 
 /**
@@ -38,6 +37,10 @@ public class AdjacencyList extends AbstractGraph
     		//now add a new linked list to the array
     		adjList.add(new LinkedList<String>());	
     	}
+    	else {
+    		//issue system error
+    		System.err.println("> Vertex does not exists!");
+    	}
 
     } // end of addVertex()
 
@@ -46,6 +49,8 @@ public class AdjacencyList extends AbstractGraph
     	
     	//don't allow self loops
     	if (srcLabel.equals(tarLabel)) {
+    		//issue system error
+    		System.err.println("> Self loops are not accepted.");
     		return;
     	}
         
@@ -61,10 +66,27 @@ public class AdjacencyList extends AbstractGraph
 	    			
 	    			//now add the target label if it doesn't already exists
 	    			if(!list.find(tarLabel)) {
-	    				list.addNode(tarLabel);
+	    				list.addNode(tarLabel); 
 	    			}
 	    			
-	    		}		    		
+	    		}
+	    		
+	    		//undirectred graph so now do the above in reverse (add source to the targets adj list)
+	    		vertex = map.get(tarLabel);
+	    		if (vertex != null) {
+	    			//now we can find the linkedlist (Adj list for this vertex)
+	    			LinkedList<String> list = adjList.getObject(vertex.getIndexPointer());
+	    			
+	    			//now add the target label if it doesn't already exists
+	    			if(!list.find(srcLabel)) {
+	    				list.addNode(srcLabel); 
+	    			}
+	    			
+	    		}
+	    	}
+	    	else {
+	    		//issue system error
+	    		System.err.println("> Vertex does not exists! Edge NOT added.");
 	    	}
     	}
 	    catch (ArrayIndexOutOfBoundsException aie) {
@@ -87,6 +109,10 @@ public class AdjacencyList extends AbstractGraph
     		//toggle to the next SIR state
     		map.get(vertLabel).toggleState(); 
     	}
+    	else {
+    		//issue system error
+    		System.err.println("> Vertex does not exists!");
+    	}
     } // end of toggleVertexState()
 
     //could have bugs: in some rare cases edges are not removed from list when vertex is deleted.
@@ -100,11 +126,25 @@ public class AdjacencyList extends AbstractGraph
 	    		if (vertex != null) {
 	    			//now we can find the linkedlist (Adj list for this vertex)
 	    			LinkedList<String> list = adjList.getObject(vertex.getIndexPointer());
+
+	    			//delete the given edge from the linkedlist
+	    			list.deleteNode(tarLabel);		
+	    		}
+	    		
+	    		//Need to delete the opposite reference too
+	    		vertex = map.get(tarLabel);
+	    		if (vertex != null) {
+	    			//now we can find the linkedlist (Adj list for this vertex)
+	    			LinkedList<String> list = adjList.getObject(vertex.getIndexPointer());
 	    			
 	    			//delete the given edge from the linkedlist
-	    			list.deleteNode(tarLabel);
-	    			
-	    		}		    		
+	    			list.deleteNode(srcLabel);	
+	    		}
+	    		
+	    	}
+	    	else {
+	    		//issue system error
+	    		System.err.println("> Edge does not exist!");
 	    	}
     	}
 	    catch (ArrayIndexOutOfBoundsException aie) {
@@ -142,6 +182,10 @@ public class AdjacencyList extends AbstractGraph
     		map.remove(vertLabel);
     		
     	}
+    	else {
+    		//issue system error
+    		System.err.println("> Vertex does not exists!");
+    	}
     	
     } // end of deleteVertex()
 
@@ -153,12 +197,13 @@ public class AdjacencyList extends AbstractGraph
     	if (!map.containsKey(vertLabel)) {
     		
     		//issue system error
+    		System.err.println("> Vertex does not exists!");
     		
     		//and return a small empty string array 
-    		return new String[1];
+    		return new String[0];
     	}
     	else if (k <= 0) { //if k is 0 or less return an empty array
-    		return new String[1];
+    		return new String[0];
     	}
     	else if (k == 1) {
     		//if k is 1 we can simply return this vertex's connections
@@ -176,12 +221,13 @@ public class AdjacencyList extends AbstractGraph
     		//create an array to store every node
     		SuperArray<String> kHop = new SuperArray<String>();
     		
-    		//run the recursive helper and convert the result to a basic string array
+    		recursiveKHop(k, vertLabel, kHop);
     		
-    		//need to de-duplicate any values in the super array first...
-    		kHop.deDuplicate();
+    		kHop.deleteAll(vertLabel); //delete the source vertex name as we don't want to list that
     		
-    		return recursiveKHop(k, vertLabel, kHop).convertToStringArray();
+    		return kHop.convertToStringArray();
+    		
+    		//return recursiveKHop(k, vertLabel, kHop).convertToStringArray();
     	}
 
     } // end of kHopNeighbours()
@@ -202,8 +248,9 @@ public class AdjacencyList extends AbstractGraph
     		LinkedList<String> list = adjList.getObject(index);
     		
     		//convert the linkedlist to a super array and append it to our array
-    		//NOTE: append ignores duplicates
-    		sArray.append(list.convertToArray());
+    		//NOTE: append ignores duplicates IF we tell it to
+    		boolean skipDuplicates = true;
+    		sArray.append(list.convertToArray(), skipDuplicates);
     		
     		//get the head node from the linked list
     		Node<String> iterator = list.getHead();
@@ -226,10 +273,6 @@ public class AdjacencyList extends AbstractGraph
         
     	for (String n: map.keySet()) {
     		os.print("(" + n + "," + map.get(n).getState().toString() + ") ");
-    		
-    		//FOR TESTING ONLY
-    		//System.out.print("(" + n + "," + map.get(n).getState().toString() + ") ");
-
     	}
     	
     	os.println();
@@ -244,9 +287,6 @@ public class AdjacencyList extends AbstractGraph
     		
     		while (printNode != null) {
     			os.println(n + " " + printNode.getValue());
-    			
-    			//System.out.println(n + " " + printNode.getValue());  //TESTING ONLY
-    			
     			printNode = printNode.getNext();
     		}
     	}

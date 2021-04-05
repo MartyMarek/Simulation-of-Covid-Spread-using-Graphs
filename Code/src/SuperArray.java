@@ -58,30 +58,48 @@ public class SuperArray<Obj> {
 	}
 	
 	//adds a new object to the array (at the next available slot)
+	//Does not skip duplicates
 	public void add(Obj obj) {
+		this.add(obj, false);
+	}
+	
+	//Optionally skip duplicates 
+	public void add(Obj obj, boolean skipDuplicate) {
 		
+		if (skipDuplicate) {
+			//need to search for the obj and see if it exists
+			for (int i = 0; i < array.length; i++) {
+				if (array[i] != null) {
+					if (array[i].equals(obj)) {
+						return; //if we find an object that equals we return
+					}
+				}
+			}
+		}
+		//if skip is false or we haven't found a duplicate, then add the item
 		//check if the deletedIndexList has items
 		if (deletedIndexList.getLength() > 0) {
 			//then we get the first item from the list and re-use the index
 			array[deletedIndexList.getHead().getValue()] = obj;
-			
-			//once we have re-used that index, we need to delete it from the list
+					
+					//once we have re-used that index, we need to delete it from the list
 			deletedIndexList.deleteNode(deletedIndexList.getHead().getValue());
 		}
 		else { //otherwise keep adding to the end of the array
-			
+					
 			//need to check if we still have empty slots left
 			if(currentIndex == (array.length)) {
 				//if we are out of room, need to expand the array
 				expandArray();
 			}
-			
+					
 			array[currentIndex] = obj;
 			currentIndex++;
 		}
-		
+				
 		//increment total number of items in our array
-		totalItems++;
+		totalItems++;		
+		
 	}
 	
 	public void deleteAtIndex(int index) throws ArrayIndexOutOfBoundsException {
@@ -99,6 +117,20 @@ public class SuperArray<Obj> {
 		}
 		//decrease total number of items in our array
 		totalItems--;
+	}
+	
+	public void deleteAll(Obj obj) {
+		//iterate through an find the object 
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] != null) {
+				if (array[i].equals(obj)) {
+					//if found delete it using delete index
+					deleteAtIndex(i);
+					
+					//keep looping through entire array to get rid of all values
+				}
+			}
+		}
 	}
 	
 	public int[] getLiveIndexList() {
@@ -198,6 +230,7 @@ public class SuperArray<Obj> {
 	}
 	
 	
+	//converts the stored objects into an integer and returns them as an int[]
 	public int[] convertToIntArray() {
 		
 		//first if we have an empty array return an empty array
@@ -208,10 +241,6 @@ public class SuperArray<Obj> {
 		
 		//create an array with the exact number of items we need
 		int[] intList = new int[totalItems];
-		
-		//to do a clean up we must get rid of any potential
-		//nulls in the middle of the array. to do that we can iterate
-		//through the array cast the object into a string and add it to stringList
 		
 		int indexPointer = 0;
 		int itemCount = 0;
@@ -241,11 +270,8 @@ public class SuperArray<Obj> {
 	}
 	
 	
-	//appends a SuperArray to this array.
-	//Both MUST contain the same object type, 
-	//Duplicates are NOT CHECKED (therefore added)
-	//Order is ignored 
-	public void append(SuperArray<Obj> newArray) {
+	//depending on the situation, skipping duplicates instead of de-duping could be faster..
+	public void append(SuperArray<Obj> newArray, boolean skipDuplicate) {
 
 		int totalCounter = 0;
 		
@@ -265,7 +291,7 @@ public class SuperArray<Obj> {
 			
 			//if the object we got from the array is not null then add it to our array
 			if (nextObj != null) {
-				this.add(nextObj);
+				this.add(nextObj, skipDuplicate);
 				totalCounter++;
 			}
 			
@@ -274,6 +300,13 @@ public class SuperArray<Obj> {
 				return;
 			}
 		}
+	}
+
+	
+	//if we only provide an object, it will be added regardless (ie. skipDuplicates = false)
+	//Order is ignored 
+	public void append(SuperArray<Obj> newArray) {
+		this.append(newArray, false);
 	}
 	
 	//This method will remove all duplicate values in this array. Mainly used to delete
@@ -301,7 +334,7 @@ public class SuperArray<Obj> {
 		else {
 			//for large number of items we run a quicksort
 			
-			deDup = quickSort(deDup, 0, deDup.length);
+			deDup = quickSort(deDup, 0, deDup.length-1);
 			
 			//now delete the duplicates and re-assign the result to this array
 			deDup = slowDeDup(deDup);
@@ -351,6 +384,9 @@ public class SuperArray<Obj> {
 		//create a target string array
 		String[] target = new String[duplicates.length];
 		
+		//keeps track of the number of duplicates
+		int duplicatesFound = 0;
+		
 		int i, j = 0;
 		
 		for (i = 0; i < (duplicates.length - 1); i++) {  //we don't need to compare the last value
@@ -360,10 +396,23 @@ public class SuperArray<Obj> {
 				//if it does not equal save the value to the target array
 				target[j++] = duplicates[i];
 			}
+			else { //if it does equal, don't copy it and increase the duplicatesFound
+				duplicatesFound++;
+			}
 		}
 		
 		//now assign the last element
 		target[j] = duplicates[duplicates.length - 1];
+		
+		//if we did find duplicates we need to trim the nulls from the end of the array
+		if(duplicatesFound > 0) {
+			//create new array with a size minus the amount of dups found
+			String[] trimmed = new String[duplicates.length - duplicatesFound];
+			//copy array
+			System.arraycopy(target, 0, trimmed, 0, (duplicates.length - duplicatesFound));
+			
+			return trimmed;
+		}
 		
 		return target;
 	}	

@@ -39,8 +39,13 @@ public class LinkedList<Obj> {
 		return tail;
 	}
 	
+	public void destroy() {
+		head = null;
+		tail = null;
+	}
+	
 	//this method adds a new generic object to the end of the list
-	public void addNode(Obj newObject) {
+	public void addNode(Obj newObject) throws NullPointerException {
 		
 		Node<Obj> newObj = new Node<Obj>(newObject);
 		
@@ -63,8 +68,28 @@ public class LinkedList<Obj> {
 		}
 	}
 	
+	//appends another linked list to the end of this one
+	//then returns this list
+	public LinkedList<Obj> append(LinkedList<Obj> newList) throws NullPointerException {
+		
+		//connect the tail node to the head node of the new list
+		tail.setNext(newList.getHead());
+		
+		//move the tail to the new list tail
+		tail = newList.getTail();
+		
+		//sets the new length
+		length = length + newList.getLength();
+		
+		//destroy the old list.
+		newList.destroy();
+		
+		return this;
+		
+	}
+	
 	//deletes a node from the linked list based on the parameter provided
-	public void deleteNode(Obj deleteObj) {
+	public void deleteNode(Obj deleteObj) throws NullPointerException {
 		
 		//if the list is empty, do nothing
 		if (length == 0) {
@@ -91,6 +116,7 @@ public class LinkedList<Obj> {
 			
 			if (tail.getValue().equals(deleteObj)) {
 				tail = head;
+				head.setNext(null);
 				length--;
 				return;
 			}			
@@ -100,12 +126,13 @@ public class LinkedList<Obj> {
 		//the list recursively until we find a match or run out of nodes 
 		recursiveDelete(null, head, deleteObj);
 		
-		length--;
+		
 	}
 	
 	//helper function to the deleteNode method, that recursively iterates through the list
 	//and deletes an object if found
 	private void recursiveDelete(Node<Obj> prev, Node<Obj> current, Obj delete) {
+		
 		//do we have a match?
 		if (current.getValue().equals(delete)) {
 			if (prev == null) {
@@ -114,7 +141,9 @@ public class LinkedList<Obj> {
 			else {
 				prev.setNext(current.getNext()); // repoint the previous nodes link to this nodes next node
 				current.setNext(null); //setting this nodes next link to null will delete it from the list
+				current = null;
 			}
+			length--;
 		}
 		else {
 			if (current.getNext() != null) {
@@ -161,7 +190,7 @@ public class LinkedList<Obj> {
 		try {
 			
 			//otherwise, create an array 
-			SuperArray<Obj> array = new SuperArray<Obj>();
+			SuperArray<Obj> array = new SuperArray<Obj>(length);
 			
 			// create a node pointer and set it to the beginning
 			Node<Obj> pointer = head;
