@@ -79,6 +79,7 @@ public class SuperMatrix<Obj> {
 	
 	//add default sized row (10) to the Matrix 
 	public void addRow() {
+		
 		//adding a row is simple just create a new array and add it
 		SuperArray<Obj> newRow = new SuperArray<Obj>();
 		rows.add(newRow);
@@ -89,6 +90,35 @@ public class SuperMatrix<Obj> {
 		rowCount++;
 	}
 	
+	//This will add rows and keep the column expansion symmetrical to the row expansion
+	//(ie. 10 x 10 to expand to 20 x 20)
+	public void addSymmetricalRow() throws NullPointerException {
+		
+		//if the current array is full we need to expand it both for row and for column at the same time
+		if (rows.getLength() == rowCount) {
+			//create a new column size (double it)
+			columnCount *= 2;
+			
+			//then we need to expand every row to the new length
+			for (int i = 0; i < rowCount; i++) {
+				if (rows.getObject(i) != null) {
+					rows.getObject(i).reSize(columnCount);  //adding a new column will trigger the expansion function in super array
+				}		
+				
+			}
+		}
+		
+		SuperArray<Obj> newRow = new SuperArray<Obj>(columnCount); //new column count if we reach row limit
+		rows.add(newRow);
+
+		rowCount++;
+
+	}
+	
+	
+	
+	/**************** DANGEROUS CODE *******************/
+	//use with care
 	//add a row of given size to the matrix 
 	public void addRow(int size) {
 		//adding a row is simple just create a new array and add it
@@ -99,6 +129,8 @@ public class SuperMatrix<Obj> {
 		rowCount++;
 	}
 	
+	/****************************************************/
+	
 	//deletes an entire row from the matrix (doesn't actually delete it)
 	//it saves it for use by the next added vertex 
 	public void deleteRow(int rowNum) {
@@ -107,21 +139,25 @@ public class SuperMatrix<Obj> {
 	}
 	
 	
-	public void addColumn() {
+	public void addColumn() throws NullPointerException {
 		// Needed for incidence matrix and need to add to ensure array resize
 		// occurs when we hit allocated limit.		
 		for (int i = 0; i < rowCount; i++) {
-			rows.getObject(i).add(null);
+			if (rows.getObject(i) != null) {
+				rows.getObject(i).add(null);
+			}
 		}
 		columnCount++;
 	}
 	
 	
 	//deletes a column from the matrix 
-	public void deleteColumn(int columnNum) {
+	public void deleteColumn(int columnNum) throws NullPointerException {
 		//iterate through each row array and delete the given index
 		for (int i = 0; i < rowCount; i++) {
-			rows.getObject(i).deleteAtIndex(columnNum);
+			if (rows.getObject(i) != null) {
+				rows.getObject(i).deleteAtIndex(columnNum);
+			}
 		}
 	}
 	

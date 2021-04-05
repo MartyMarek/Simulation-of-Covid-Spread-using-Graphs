@@ -486,6 +486,33 @@ public class SuperArray<Obj> {
 		
 	}
 	
+	//this method will resize this array to any length. It will copy 
+	//all of the existing content up until the new size limit if smaller
+	public void reSize(int size) {
+		
+		//minimum size must be 1
+		if (size < 1) {
+			throw new ArrayIndexOutOfBoundsException(); 
+		}
+		
+		@SuppressWarnings("unchecked")
+		Obj[] tempArray = (Obj[])new Object[size];
+		
+		//loop through the existing array and reassign all indexes to new array
+		for (int i = 0; i < array.length; i++) {
+			tempArray[i] = array[i];
+			
+			//if the new size is smaller than our new array size, break out of loop
+			if (i == size) {
+				break;
+			}
+		}
+		
+		//once we have re-assigned all index values, we can reassign the tempArray
+		array = tempArray;
+		
+	}
+	
 	//this method will double the size of the internal array when called
 	private void expandArray() {
 		
@@ -500,7 +527,7 @@ public class SuperArray<Obj> {
 			
 		}
 		catch (ArrayIndexOutOfBoundsException e ) {
-			System.out.println("Error with the Super Array");
+			System.err.println("Error with the Super Array");
 		}
 		
 		//once we have re-assigned all index values, we can reassign the tempArray
