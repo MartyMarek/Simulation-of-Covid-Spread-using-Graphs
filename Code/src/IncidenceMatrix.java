@@ -167,7 +167,13 @@ public class IncidenceMatrix extends AbstractGraph
     	// REMOVE - debug only.
     	os.println("Number of edges:" + edgeList.length);
     	for (int i=0; i<edgeList.length; i++) {
-    			os.println(incEdges.getObject(edgeList[i])[0] + " " + incEdges.getObject(i)[1]);
+    		
+    			try {
+    				os.println(incEdges.getObject(edgeList[i])[0] + " " + incEdges.getObject(i)[1]);
+    			}
+    			catch (NullPointerException npe) {
+    				os.println(npe.getMessage());
+    			}
     	}
     } // end of printEdges()
 
