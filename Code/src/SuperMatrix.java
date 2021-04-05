@@ -106,6 +106,17 @@ public class SuperMatrix<Obj> {
 		//rowCount--;
 	}
 	
+	
+	public void addColumn() {
+		// Needed for incidence matrix and need to add to ensure array resize
+		// occurs when we hit allocated limit.		
+		for (int i = 0; i < rowCount; i++) {
+			rows.getObject(i).add(null);
+		}
+		columnCount++;
+	}
+	
+	
 	//deletes a column from the matrix 
 	public void deleteColumn(int columnNum) {
 		//iterate through each row array and delete the given index

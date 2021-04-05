@@ -157,6 +157,12 @@ public class SuperArray<Obj> {
 		return currentIndex;
 	}
 	
+	
+	public void setCurrentIndex(int newIndex) {
+		currentIndex = newIndex;
+	}
+	
+	
 	public int getTotalItems() {
 		return totalItems;
 	}
