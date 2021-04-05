@@ -480,8 +480,6 @@ public class SuperArray<Obj> {
 		
 	}
 	
-	
-	
 	//this method will double the size of the internal array when called
 	private void expandArray() {
 		
