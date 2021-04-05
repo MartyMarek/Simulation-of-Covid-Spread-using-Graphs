@@ -1,0 +1,15 @@
+AV t01
+AV t02
+AE t01 t02
+PV
+PE
+AV t03
+AE t01 t01
+AE t02 t03
+AE t01 t03
+PV
+PE
+DV t03
+PV
+PE
+Q

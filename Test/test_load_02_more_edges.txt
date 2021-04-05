@@ -1,0 +1,34 @@
+AV t01
+AV t02
+AE t01 t02
+PV
+PE
+AV t03
+AE t02 t03
+AE t01 t03
+PV
+PE
+AV t04
+AE t04 t01
+AE t04 t02
+AE t04 t03
+PV
+PE
+AV t05
+AE t04 t05
+AE t01 t05
+AE t05 t03
+PV
+PE
+DE t05 t03
+PE
+AE t01 t01
+PE
+AE t02 t05
+AE t01 t01
+PE
+DV t04
+AE t01 t01
+PE
+Q
+
