@@ -36,7 +36,7 @@ public class AdjacencyMatrix extends AbstractGraph
     		//put the new vertlabel as a new key and connect it with a new vertex 
     		//the new vertex is also given the current index from our matrix
     		map.put(vertLabel, new Vertex(adjMatrix.getCurrentRowIndex()));
-    		adjMatrix.addRow();
+    		adjMatrix.addSymmetricalRow();
 
     	}
     	else {
@@ -99,7 +99,7 @@ public class AdjacencyMatrix extends AbstractGraph
     	}
     	else {
     		//issue system error
-    		System.err.println("> Vertex does not exists!");
+    		System.err.println("> Vertex " + vertLabel + " does not exists!");
     	}
     } // end of toggleVertexState()
 
