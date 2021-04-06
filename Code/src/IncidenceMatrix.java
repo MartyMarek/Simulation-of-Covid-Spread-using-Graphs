@@ -1,4 +1,5 @@
 import java.io.PrintWriter;
+import java.util.HashMap;
 
 /**
  * Incidence matrix implementation for the GraphInterface interface.
@@ -12,35 +13,31 @@ public class IncidenceMatrix extends AbstractGraph
 
 	// Matrix of boolean to track edges. 
 	SuperMatrix<Boolean> incMatrix;
-	SuperArray<String[]> incEdges;
+	
+	// Map that stores the edge pairs and their column index 
+	HashMap<Edge, Integer> edgeMap = new HashMap<Edge, Integer>();
+
+	/* EdgeMap DESIGN DECISION. putting edge as the key instead of the 
+	 * index value, will allow faster edge additions and deletions
+	 * at the cost of slower edge deletions. I'm making the assumption
+	 * that edge looks ups and additions will be executed more frequently.
+	 */
 
 	/**
 	 * Contructs empty graph.
 	 */
     public IncidenceMatrix() {
     	super();
-    	// Initial size of 10 x 10 will be created (SuperMatrix default).
     	incMatrix  = new SuperMatrix<Boolean>(); 
-    	// Initial empty size of 10 will be created (SuperArray default).
-    	incEdges  = new SuperArray<String[]>();
+
     } // end of IncidenceMatrix()
 
 
     public void addVertex(String vertLabel) {
     	// Create and add a new vertex to the map if vertLabel does not already exist.
     	if (!map.containsKey(vertLabel)) {
-    		
-    		// Put the new vertLabel as a new key and connect it to a new vertex. 
-    		// The new vertex is given the current index from our matrix.
     		map.put(vertLabel, new Vertex(incMatrix.getCurrentRowIndex()));
-    		incMatrix.addRow();
-    		// If edges have already been added then the column index position for
-    		// the new Superarray needs to be advanced to match the other vertices.
-    		int checkRow = map.get(vertLabel).getIndexPointer();
-    		incMatrix.getRow(checkRow).setCurrentIndex(incMatrix.getCurrentColumnIndex());
-    		
-    		// REMOVE - testing.
-//    		incMatrix.printMatrix();
+    		incMatrix.addSymmetricalRow();
     	}
     } // end of addVertex()
 
@@ -48,59 +45,51 @@ public class IncidenceMatrix extends AbstractGraph
     public void addEdge(String srcLabel, String tarLabel) {
     	// Don't allow self loops.
     	if (srcLabel.equals(tarLabel)) {
-    		// REMOVE - testing. Can use this to trigger a matrix print without changing anything
-    		// by trying to set a vertex to be looping i.e. AE t01 t01
-    		incMatrix.printMatrix();
     		return;
     	}
-		// Check if both keys exist.    	
+		// Check if both vertices exist	
     	if (map.containsKey(srcLabel) && map.containsKey(tarLabel) ) {
-    		// Check if edge already exists.
-	    	if (getEdgeIndex(srcLabel, tarLabel) == -1) {	    		
-		    	// Create a new column for srcLabale <> tarLabel. As it is undirected we 
-		    	// only need one column.
-		    	// This feels a bit delicate as it relies on column indexes in incEdges 
-		    	// Superarray being identical to the incMatrix Supermatrix.
-		    	// TODO - work out if there is a better way!
-		    	incEdges.add(new String[] {srcLabel, tarLabel});
-		    	int newColumnIndex = incMatrix.getCurrentColumnIndex();
-		    	incMatrix.addColumn();
-		
-		    	int sourceIndex = map.get(srcLabel).getIndexPointer();
-		    	int targetIndex = map.get(tarLabel).getIndexPointer();
-		    			
-				// With the new column update source and target to be true. 
-				Boolean edge = true;
-				incMatrix.setObject(sourceIndex, newColumnIndex, edge);
-				incMatrix.setObject(targetIndex, newColumnIndex, edge);		 
-	    	}
+    		
+    		//we create a new edge 
+    		Edge newEdge = new Edge(srcLabel, tarLabel);
+    		
+    		//we also create its reverse so we can easly look this up
+    		//NOTE: we can also simplify this by created a better
+    		//hashing algo in Edge.hashCode()
+    		Edge newEdgeReverse = new Edge(tarLabel, srcLabel);
+    		
+    		//get the current column index (this is automatically updated in SuperArray (ie SuperMatrix)
+    		Integer edgeIndex = incMatrix.getCurrentColumnIndex();
+    		
+    		//put the edge into the edge map. the reverse will also give us the same index
+    		edgeMap.put(newEdge, edgeIndex);
+    		edgeMap.put(newEdgeReverse, edgeIndex);
+    		
+    		Boolean edgeIndicator = false;
+    		//add the column to the matrix (the entire column is initialised to false)
+    		incMatrix.addColumn(edgeIndicator);
+	    	
+    		//now update the incidence matrix 
+    		Vertex sourceVertex = map.get(srcLabel);
+    		Vertex targetVertex = map.get(tarLabel);
+    		
+    		int sourceIndex = sourceVertex.getIndexPointer();
+    		int targetIndex = targetVertex.getIndexPointer();
+    		
+    		//update the matrix with true values at specified coordinates 
+    		edgeIndicator = true;
+    		
+    		//source and target are the rows and edge is the column
+    		incMatrix.setObject(sourceIndex, edgeIndex, edgeIndicator);
+    		incMatrix.setObject(targetIndex, edgeIndex, edgeIndicator);
+    		
     	}
-		// REMOVE - testing.
-//		incMatrix.printMatrix();
+
     } // end of addEdge()
 
-
-    public int getEdgeIndex(String srcLabel, String tarLabel) {
-    	int[] edgeList = incEdges.getLiveIndexList();
-    	for (int i=0; i<edgeList.length; i++) {
-    		// Since only one column for both directions (A > B and B > A), could 
-    		// be identified as Source, Target or Target, Source.
-    		// REFACTOR - better way to do this? Comparator?    		
-    		if ((incEdges.getObject(edgeList[i])[0].equals(srcLabel) || incEdges.getObject(edgeList[i])[0].equals(tarLabel)) && (incEdges.getObject(edgeList[i])[1].equals(srcLabel) || incEdges.getObject(edgeList[i])[1].equals(tarLabel))) {
-    			// REMOVE - debug.
-//    			System.out.println("Edge exists: " + edgeList[i]);
-    			return edgeList[i];
-    		}
-    	}
-    	// REMOVE - debug.
-//		System.out.println("Edge does not exist");
-    	return -1;
-    }
-    
     
     public void toggleVertexState(String vertLabel) {
     	if (map.containsKey(vertLabel)) {
-    		// Toggle to the next SIR state (S > I > R).
     		//check if the vertex exists..
         	if (map.containsKey(vertLabel)) {
         		map.get(vertLabel).toggleState();
@@ -114,43 +103,56 @@ public class IncidenceMatrix extends AbstractGraph
 
 
     public void deleteEdge(String srcLabel, String tarLabel) {
-        // Find the position in incEdges and use it to remove the column in 
-    	// incEdge and incMatrix.    	
-    	int edgeIndex = getEdgeIndex(srcLabel, tarLabel);    		
-    	if (edgeIndex != -1) {
-    		incEdges.deleteAtIndex(edgeIndex);
-    		incMatrix.deleteColumn(edgeIndex);
+        //deleting the edge will require the edge index to be deleted from every row
+    	Edge edge = new Edge(srcLabel, tarLabel);
+    	Edge edgeReverse = new Edge(tarLabel, srcLabel);
+
+    	Integer index;
+    	
+    	if(edgeMap.containsKey(edge)) {
+    		index = edgeMap.get(edge);
+    		incMatrix.deleteColumn(index);
     	}
     	
-		// REMOVE - testing.
-		incMatrix.printMatrix();
+    	//now delete the edge from the map (need to do this for both combinations)
+    	edgeMap.remove(edge);
+    	edgeMap.remove(edgeReverse);
+    	
     } // end of deleteEdge()
-
-
+    
     public void deleteVertex(String vertLabel) {
-    	if (map.containsKey(vertLabel)) {
-    		// REFACTOR - thinking that we should keep track of number of edges
-    		// so that we can test vertex for edges == 0 to speed things up.
+    	
+    	SuperArray<String> deletionList = new SuperArray<String>();
+    	
+    	//before deleting a vertex, we have to delete any edge that it is part of
+    	for (Edge  n: edgeMap.keySet()) {
     		
-    		// Iterate through incEdges looking for any instance of vertLabel.
-    		int[] edgeList = incEdges.getLiveIndexList();
-        	for (int i=0; i<edgeList.length; i++) {
-        		// Since only one column for both directions (A>B and B>A), verLabel
-        		// could be in first or second location. 
-            	// REFACTOR - better way to do this? Comparator?    		
-        		if (incEdges.getObject(edgeList[i])[0].equals(vertLabel) || incEdges.getObject(edgeList[i])[1].equals(vertLabel)) {
-            		incEdges.deleteAtIndex(edgeList[i]);
-            		incMatrix.deleteColumn(edgeList[i]);	
-        		}
-        	}
-
-    		// Edges cleared out, delete the vertex.
-        	int index = map.get(vertLabel).getIndexPointer();
-    		incMatrix.deleteRow(index);
-    		    		
-    		//now delete it from the map
-    		map.remove(vertLabel);
+    		//get the row and column index for this edge
+    		int colIndex = edgeMap.get(n);
+    		Vertex vertex = map.get(vertLabel);
+    		int rowIndex = vertex.getIndexPointer();
+    		
+    		//check if that row/ column is set to true
+    		if (incMatrix.getObject(rowIndex, colIndex) != null) {
+    			if (incMatrix.getObject(rowIndex, colIndex)) {
+	    			//we can't delete edge inside the for loop as the returned edge 
+    				//list must stay the same until the loop ends.
+    				//we mark this edge for deletion later...
+    				deletionList.add(n.getTarget()); //mark this for edge deletion
+	    			
+    			}
+    		}
     	}
+    	
+    	String[] list = deletionList.convertToStringArray();
+    	//now delete all the edges
+    	for (int i = 0; i < deletionList.getTotalItems(); i++) {
+    		deleteEdge(vertLabel, list[i]);
+    	}
+    	
+    	//once we have deleted all edges, we can delete the vertex
+    	incMatrix.deleteRow(map.get(vertLabel).getIndexPointer());
+    	
     } // end of deleteVertex()
 
 
@@ -171,18 +173,8 @@ public class IncidenceMatrix extends AbstractGraph
 
 
     public void printEdges(PrintWriter os) {
-    	int[] edgeList = incEdges.getLiveIndexList();
-    	// REMOVE - debug only.
-    	os.println("Number of edges:" + edgeList.length);
-    	for (int i=0; i<edgeList.length; i++) {
-    		
-    			try {
-    				os.println(incEdges.getObject(edgeList[i])[0] + " " + incEdges.getObject(i)[1]);
-    			}
-    			catch (NullPointerException npe) {
-    				os.println(npe.getMessage());
-    			}
-    	}
+
+ 
     } // end of printEdges()
 
 } // end of class IncidenceMatrix

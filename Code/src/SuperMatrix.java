@@ -35,7 +35,7 @@ public class SuperMatrix<Obj> {
 		rowCount = 0;
 		columnCount = 10;	
 		
-		lastRow = 0;
+		//lastRow = 0;
 		
 	}
 	
@@ -102,7 +102,7 @@ public class SuperMatrix<Obj> {
 			//then we need to expand every row to the new length
 			for (int i = 0; i < rowCount; i++) {
 				if (rows.getObject(i) != null) {
-					rows.getObject(i).reSize(columnCount);  //adding a new column will trigger the expansion function in super array
+					rows.getObject(i).reSize(columnCount);  
 				}		
 				
 			}
@@ -138,7 +138,17 @@ public class SuperMatrix<Obj> {
 		//rowCount--;
 	}
 	
+	public void addColumn(Obj column) {
+		for (int i = 0; i < rowCount; i++) {
+			if (rows.getObject(i) != null) {
+				rows.getObject(i).add(column);
+			}
+		}
+		
+	}
 	
+	/*************** MARK FOR DELETION *******************/
+	/* current depenency - IncidenceMatrixOriginal.addEdge() */
 	public void addColumn() throws NullPointerException {
 		// Needed for incidence matrix and need to add to ensure array resize
 		// occurs when we hit allocated limit.		
@@ -147,8 +157,10 @@ public class SuperMatrix<Obj> {
 				rows.getObject(i).add(null);
 			}
 		}
-		columnCount++;
+		columnCount++; 
 	}
+	
+	/****************************************************/
 	
 	
 	//deletes a column from the matrix 
@@ -172,13 +184,13 @@ public class SuperMatrix<Obj> {
 			if (rows.getObject(i) != null) {
 				for (j = 0; j < rows.getObject(i).getLength(); j++) {
 					if (rows.getObject(i).getObject(j) == null) {
-						System.out.print("n ");
+						System.out.print("n  ");
 					}
 					else if( (Boolean)rows.getObject(i).getObject(j) == false) {
-						System.out.print("0 ");
+						System.out.print("0  ");
 					}
 					else {
-						System.out.print("1 ");
+						System.out.print("1  ");
 					}
 				}
 				System.out.println();
