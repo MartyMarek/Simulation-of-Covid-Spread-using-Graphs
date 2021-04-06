@@ -92,10 +92,8 @@ public class AdjacencyMatrix extends AbstractGraph
     //complete
     public void toggleVertexState(String vertLabel) {
     	//check if the vertex exists..
-    	if (map.containsKey(vertLabel)) {
-    		
-    		//toggle to the next SIR state
-    		map.get(vertLabel).toggleState(); 
+    	if (map.containsKey(vertLabel)) {	
+    		map.get(vertLabel).toggleState();
     	}
     	else {
     		//issue system error
@@ -164,7 +162,6 @@ public class AdjacencyMatrix extends AbstractGraph
 	    		
 	    		//now delete it from the map
 	    		map.remove(vertLabel);
-	
 	    	}
 	    	else {
 	    		//issue system error

@@ -105,9 +105,7 @@ public class AdjacencyList extends AbstractGraph
     public void toggleVertexState(String vertLabel) {
     	//check if the vertex exists..
     	if (map.containsKey(vertLabel)) {
-    		
-    		//toggle to the next SIR state
-    		map.get(vertLabel).toggleState(); 
+    		map.get(vertLabel).toggleState();
     	}
     	else {
     		//issue system error

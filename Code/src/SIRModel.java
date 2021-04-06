@@ -37,82 +37,79 @@ public class SIRModel
     		System.err.println(npe.getMessage());
     	}
     	
-    	int counter = 0;
+    	//keeps track of the iterations in the simulation
+    	int counter = 1;
     	
-    	while (counter++ < 15) {
+    	//keeps track of the last change step
+    	int lastChange = 1;
+    	
+    	//when this is set to true we stop the simulation
+    	boolean stopCondition = false;
+    	
+    	//keep looping while our stop conditions have not been met
+    	while (!stopCondition) {
+
+    		//the status list will store both newly infected and newly recovered vertex lists
+    		StatusList sList = new StatusList();
     		
-    		String[] newlyInfected = updateInfected(graph, infectionProb);
+    		//iterates through and calculates infected and recovered based on the probabilities given. 
+    		sList = ((AbstractGraph)graph).updates(infectionProb, recoverProb);
     		
-    		String[] newlyRecovered = updateRecovered(graph, recoverProb);
+    		//commits changes to our graph from above generated lists. 
+    		((AbstractGraph)graph).updateGraph(sList);
     		
     		sirModelOutWriter.print(counter + ": ");
     		
-    		displayUpdates(newlyInfected, newlyRecovered, sirModelOutWriter);
+    		printStep(sList, sirModelOutWriter);
     		
+    		//stop condition - if there are no changes to both newly infected and newly recovered..
+    		if (sList.getNewlyInfectedTotal() == 0 && sList.getNewlyRecoveredTotal() == 0) {
+    			
+    			//if there are no new changes, no new infected nodes and no changes in the last 10 turns we stop
+    			if (sList.getTotalInfected() == 0 && (counter >= (lastChange + 9))) {
+    				stopCondition = true;
+    			}
+    		}
+    		else {
+    			//keeps track of what iteration our last step was. 
+    			lastChange = counter;
+    		}
+    		counter++;
     	}
-    	
-    	
-    	/* TESTING
-    	//while stop condition is not met
-    	String[] newlyInfected = updateInfected(graph, infectionProb);
-    	
-    	for (int i = 0; i < newlyInfected.length; i++) {
-
-    		System.out.println(newlyInfected[i]);
-    		
-    	}
-    	
-    	System.out.println("*****");
-    	
-    	String[] newlyRecovered = updateRecovered(graph, recoverProb);
-    	
-    	for (int i = 0; i < newlyRecovered.length; i++) {
-
-    		System.out.println(newlyRecovered[i]);
-    		
-    	} */
     	
     	
     	
     } // end of runSimulation()
     
-    /************************** VALIDATE ASSUMPTION ***************************/
     //this method sets the infected nodes on the graph at the beginning of the simulation 
-    //for now we are making the assumption that all vertex state start off as S in the beginning 
-    //of the simulation
     private void initInfected(ContactsGraph graph, String[] seedVertices) {
     	
     	for (int i = 0; i < seedVertices.length; i++) {
     		if (seedVertices[i] != null) {
-    			graph.toggleVertexState(seedVertices[i]); //we are assuming that all vertex state start off as S
+    			try {
+    				((AbstractGraph)graph).setVertexState(seedVertices[i], SIRState.I);
+    			}
+    			catch (NullPointerException npe) {
+    				//ignore vertices that don't exist
+    			}
     		}
     	}
     }
     
-
-    //implemented in the AbstractGraph class
-    private String[] updateInfected(ContactsGraph graph, float infectionProb) {
+    //prints the changed nodes (both newly infected and newly recovered) to the PrintWriter
+    private void printStep(StatusList sList, PrintWriter pw) {
     	
-    	return ((AbstractGraph)graph).updateInfected(infectionProb);
-    }
-    
-    //implemented in the AbstractGraph class
-    private String[] updateRecovered(ContactsGraph graph, float recoverProb) {
+    	String[] infected = sList.getInfected();
+    	String[] recovered = sList.getRecovered();
     	
-    	return ((AbstractGraph)graph).updateRecovered(recoverProb);
-    }
-    
-    //displays the newly infected and newly recovered lists on the last turn
-    private void displayUpdates(String[] infected, String[] recovered, PrintWriter pw) {
-    	
-    	pw.print("[");
+    	pw.print("[ ");
     	for (int i = 0; i < infected.length; i++) {
 
     		pw.print(infected[i] + " ");
     		
     	}
     	
-    	pw.print("]  :  [");
+    	pw.print("]  :  [ ");
     	
     	for (int i = 0; i < recovered.length; i++) {
 

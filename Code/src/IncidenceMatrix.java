@@ -101,7 +101,14 @@ public class IncidenceMatrix extends AbstractGraph
     public void toggleVertexState(String vertLabel) {
     	if (map.containsKey(vertLabel)) {
     		// Toggle to the next SIR state (S > I > R).
-    		map.get(vertLabel).toggleState(); 
+    		//check if the vertex exists..
+        	if (map.containsKey(vertLabel)) {
+        		map.get(vertLabel).toggleState();
+        	}
+        	else {
+        		//issue system error
+        		System.err.println("> Vertex does not exists!");
+        	}
     	}
     } // end of toggleVertexState()
 
@@ -140,6 +147,7 @@ public class IncidenceMatrix extends AbstractGraph
     		// Edges cleared out, delete the vertex.
         	int index = map.get(vertLabel).getIndexPointer();
     		incMatrix.deleteRow(index);
+    		    		
     		//now delete it from the map
     		map.remove(vertLabel);
     	}
