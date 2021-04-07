@@ -1,15 +1,25 @@
-
+/****************************************************************************************************
+ * Immutable Class: Edge
+ * Description:
+ * This immutable class is used as a key for the Edge Map of the incidence matrix. 
+ * 
+ * @author Team #23
+ *
+ */
 public final class Edge {
 
 	private String source;
 	private String target;
 	
+	
+	//this constructor must be used to set the initial edge information
 	public Edge(String source, String target) {
 		
 		this.source = source;
 		this.target = target;		
 	}
 	
+	//get methods. NOTE: this class cannot have set methods
 	public String getSource() {
 		return source;
 	}
@@ -18,13 +28,16 @@ public final class Edge {
 		return target;
 	}
 
-	
+	/*********** POSSIBLE IMPROVEMENT ***********/
+	//very simple hashcode, this could be improved to work so that both combinations of strings
+	//ie. AB BA create the same hashcode. if we do that we would not need to store both 
+	//combinations separately for the incidence matrix
 	public int hashCode() {
 		return String.join(source, target).hashCode();
 	}
 	
-	//Need to override the equals method so that we can use the
-	//map to find our objects again
+	//Need to override the equals method. equals will return true as long as both 
+	//string are the same but not necessarily in the same order. 
 	public boolean equals(Object obj) {
 		
 		if (obj == null) {

@@ -19,7 +19,7 @@ public class IncidenceMatrix extends AbstractGraph
 
 	/* EdgeMap DESIGN DECISION. putting edge as the key instead of the 
 	 * index value, will allow faster edge additions and deletions
-	 * at the cost of slower edge deletions. I'm making the assumption
+	 * at the cost of slower vertex deletions. I'm making the assumption
 	 * that edge looks ups and additions will be executed more frequently.
 	 */
 
@@ -138,7 +138,7 @@ public class IncidenceMatrix extends AbstractGraph
 	    			//we can't delete edge inside the for loop as the returned edge 
     				//list must stay the same until the loop ends.
     				//we mark this edge for deletion later...
-    				deletionList.add(n.getTarget()); //mark this for edge deletion
+    				deletionList.add(n.getTarget()); //mark this for edge deletion by saving it to a list
 	    			
     			}
     		}
