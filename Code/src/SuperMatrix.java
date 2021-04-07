@@ -19,9 +19,6 @@ public class SuperMatrix<Obj> {
 	//keeps track of how many rows we have in the matrix
 	private int rowCount;
 	
-	//keeps track of the last row index 
-	private int lastRow;
-	
 	//keeps track of how many columns we have 
 	private int columnCount;
 	
@@ -35,8 +32,6 @@ public class SuperMatrix<Obj> {
 		rowCount = 0;
 		columnCount = 10;	
 		
-		//lastRow = 0;
-		
 	}
 	
 	//constructor to create an asymmetrical matrix
@@ -46,7 +41,6 @@ public class SuperMatrix<Obj> {
 		rowCount = numRows;
 		columnCount = numColumns;
 		
-		lastRow = 0;
 	}
 	
 	//returns the current row index
@@ -77,19 +71,6 @@ public class SuperMatrix<Obj> {
 		rows.getObject(row).setObject(column, obj);
 	}
 	
-	//add default sized row (10) to the Matrix 
-	public void addRow() {
-		
-		//adding a row is simple just create a new array and add it
-		SuperArray<Obj> newRow = new SuperArray<Obj>();
-		rows.add(newRow);
-		
-		//if the index we added this last row is larger than our existing last row
-		//need a method in SuperArray to return the last index
-		
-		rowCount++;
-	}
-	
 	//This will add rows and keep the column expansion symmetrical to the row expansion
 	//(ie. 10 x 10 to expand to 20 x 20)
 	public void addSymmetricalRow() throws NullPointerException {
@@ -114,31 +95,14 @@ public class SuperMatrix<Obj> {
 		rowCount++;
 
 	}
-	
-	
-	
-	/**************** DANGEROUS CODE *******************/
-	//use with care
-	//add a row of given size to the matrix 
-	public void addRow(int size) {
-		//adding a row is simple just create a new array and add it
-		SuperArray<Obj> newRow = new SuperArray<Obj>(size);
-		
-		rows.add(newRow);
-		
-		rowCount++;
-	}
-	
-	/****************************************************/
-	
+
 	//deletes an entire row from the matrix (doesn't actually delete it)
 	//it saves it for use by the next added vertex 
 	public void deleteRow(int rowNum) {
 		rows.deleteAtIndex(rowNum);
-		//rowCount--;
 	}
 	
-	public void addColumn(Obj column) {
+	public void addColumn(Obj column) throws NullPointerException {
 		for (int i = 0; i < rowCount; i++) {
 			if (rows.getObject(i) != null) {
 				rows.getObject(i).add(column);
@@ -146,22 +110,6 @@ public class SuperMatrix<Obj> {
 		}
 		
 	}
-	
-	/*************** MARK FOR DELETION *******************/
-	/* current depenency - IncidenceMatrixOriginal.addEdge() */
-	public void addColumn() throws NullPointerException {
-		// Needed for incidence matrix and need to add to ensure array resize
-		// occurs when we hit allocated limit.		
-		for (int i = 0; i < rowCount; i++) {
-			if (rows.getObject(i) != null) {
-				rows.getObject(i).add(null);
-			}
-		}
-		columnCount++; 
-	}
-	
-	/****************************************************/
-	
 	
 	//deletes a column from the matrix 
 	public void deleteColumn(int columnNum) throws NullPointerException {
@@ -173,7 +121,7 @@ public class SuperMatrix<Obj> {
 		}
 	}
 	
-	
+
 	//Please note: this is for testing purposes only, don't run this with a large matrix
 	public void printMatrix() {
 		
@@ -200,6 +148,37 @@ public class SuperMatrix<Obj> {
 			}
 		}
 	}
+	
+	/*************** MARK FOR DELETION *******************/
+	
+	/* current dependency - IncidenceMatrixOriginal.addEdge() */
+	public void addColumn() throws NullPointerException {
+		// Needed for incidence matrix and need to add to ensure array resize
+		// occurs when we hit allocated limit.		
+		for (int i = 0; i < rowCount; i++) {
+			if (rows.getObject(i) != null) {
+				rows.getObject(i).add(null);
+			}
+		}
+		columnCount++; //columncount should not be incremented here.
+	}
+	
+	
+	/* We can use addSymmetricalRow() for any matrix. the point is that
+	 * the column lengths will double when it runs out of room
+	 */
+	public void addRow() {
+		
+		//adding a row is simple just create a new array and add it
+		SuperArray<Obj> newRow = new SuperArray<Obj>();
+		rows.add(newRow);
+		
+		//if the index we added this last row is larger than our existing last row
+		//need a method in SuperArray to return the last index
+		
+		rowCount++;
+	}
+	/*****************************************************/
 	
 
 }
