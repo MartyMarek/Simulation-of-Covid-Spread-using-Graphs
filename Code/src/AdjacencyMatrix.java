@@ -278,20 +278,16 @@ public class AdjacencyMatrix extends AbstractGraph
     				
     				int colIndex = map.get(m).getIndexPointer();
     				
-    				//we draw a diagonal line from (1,1) to (n,n) and only
-    				//look at values above that line
-    				if (colIndex > rowIndex) {
-    				
-	    				//now check for edges (avoid the null values in our matrix)
-		        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
-		    				//if the coordinate at this row an column contains true, then we have an edge
-		        			if(adjMatrix.getObject(rowIndex, colIndex)) {
-		    					//add to the linkedlist recursively 
-		        				list.addNode(m);
-		        				recursiveHop(k - 1, m, list);
-		    				}
-		        		}
-    				}
+	    			//now check for edges (avoid the null values in our matrix)
+		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    			//if the coordinate at this row an column contains true, then we have an edge
+		        		if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    				//add to the linkedlist recursively 
+		        			list.addNode(m);
+		        			recursiveHop(k - 1, m, list);
+		    			}
+		        	}
+
     			}
     		}
     	}
