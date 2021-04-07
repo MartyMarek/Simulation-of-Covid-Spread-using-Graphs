@@ -47,7 +47,7 @@ public class IncidenceMatrix extends AbstractGraph
     	if (srcLabel.equals(tarLabel)) {
     		return;
     	}
-		// Check if both vertices exist	
+		// Check if both vertices exist.	
     	if (map.containsKey(srcLabel) && map.containsKey(tarLabel) ) {
     		
     		//we create a new edge 
@@ -90,7 +90,7 @@ public class IncidenceMatrix extends AbstractGraph
     
     public void toggleVertexState(String vertLabel) {
     	if (map.containsKey(vertLabel)) {
-    		//check if the vertex exists..
+    		//check if the vertex exists.
         	if (map.containsKey(vertLabel)) {
         		map.get(vertLabel).toggleState();
         	}
@@ -173,8 +173,9 @@ public class IncidenceMatrix extends AbstractGraph
 
 
     public void printEdges(PrintWriter os) {
-
- 
+    	for (Edge e: edgeMap.keySet()) {
+    		os.println(e.getSource() + " " + e.getTarget());
+    	}
     } // end of printEdges()
 
 } // end of class IncidenceMatrix
