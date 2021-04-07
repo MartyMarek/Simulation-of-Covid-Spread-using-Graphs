@@ -14,6 +14,10 @@
 
 public class SuperArray<Obj> {
 	
+	//if the number of items to be sorted is larger than this, the sort method
+	//will switch to quicksort
+	private final int insertionSortLimit = 100;
+	
 	//This is the default initial size used by Java collection classes as well. 
 	// Could be tweaked based on input vs performance 
 	private final int initialIndexSize = 10;
@@ -133,17 +137,7 @@ public class SuperArray<Obj> {
 		}
 	}
 	
-	public int[] getLiveIndexList() {
-		SuperArray<Integer> list = new SuperArray<Integer>();
-		
-		for (int i = 0; i < array.length; i++) {
-			if (array[i] != null) {
-				list.add(i);
-			}
-		}
-		
-		return list.convertToIntArray();
-	}
+	
 	
 	
 	
@@ -328,8 +322,8 @@ public class SuperArray<Obj> {
 		String[] deDup = this.convertToStringArray();
 		
 		//depending on how many items we have in the array, run different sort algo's
-		// need to identify what the optimal value is to make decision. 
-		if (totalItems < 10) {
+		// need to identify what the optimal value is 
+		if (totalItems < insertionSortLimit) {
 			//run an insertion sort
 			deDup = insertionSort(deDup);
 			
@@ -339,8 +333,7 @@ public class SuperArray<Obj> {
 		}
 		else {
 			//for large number of items we run a quicksort
-			
-			deDup = quickSort(deDup, 0, deDup.length-1);
+			quickSort(deDup, 0, deDup.length-1);
 			
 			//now delete the duplicates and re-assign the result to this array
 			deDup = slowDeDup(deDup);
@@ -424,17 +417,19 @@ public class SuperArray<Obj> {
 	}	
 	
 	//this is a helper function that will sort the array based on its values
-	private String[] quickSort(String[] array, int low, int high) {
+	private void quickSort(String[] array, int low, int high) {
 		
-		if (low < high) {
-			int pivot = getPivotIndex(array, low, high);
-			
-			quickSort(array, low, pivot - 1); // range before the pivot
-			quickSort(array, pivot + 1, high); //range after the pivot
+		try {
+			if (low < high) {
+				int pivot = getPivotIndex(array, low, high);
+				
+				quickSort(array, low, pivot - 1); // range before the pivot
+				quickSort(array, pivot + 1, high); //range after the pivot
+			}
 		}
-		
-		//get the pivot value for the quicksort..
-		return array;
+		catch (StackOverflowError sfe) {
+			System.err.println("Stack Over Flow: " + high + " is to large!");
+		}
 		
 	}
 	
@@ -443,15 +438,15 @@ public class SuperArray<Obj> {
 		
 		String highValue = array[high];
 		
-		int smallIndex = low -1;
+		int smallIndex = low - 1;
 		
-		for (int i = low; i <= high - 1; i++) {
+		for (int i = low; i < high; i++) {
 			
 			//we have to catch a possible nullpointer exception because
 			//our array could have nulls
 			try {
 				//if the current string is smaller
-				if (array[i].compareToIgnoreCase(highValue) < 0) {
+				if (array[i].compareToIgnoreCase(highValue) <= 0) {
 					smallIndex++;
 					
 					//swap the elements
@@ -533,6 +528,19 @@ public class SuperArray<Obj> {
 		//once we have re-assigned all index values, we can reassign the tempArray
 		array = tempArray;
 		
+	}
+	
+	/* MARKED FOR DELETION */
+	public int[] getLiveIndexList() {
+		SuperArray<Integer> list = new SuperArray<Integer>();
+		
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] != null) {
+				list.add(i);
+			}
+		}
+		
+		return list.convertToIntArray();
 	}
 
 }

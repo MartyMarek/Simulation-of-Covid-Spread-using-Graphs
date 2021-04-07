@@ -230,6 +230,9 @@ public class AdjacencyList extends AbstractGraph
 
     } // end of kHopNeighbours()
     
+    
+    /* PERFORMANCE IMPROVEMENT - provide an ignore value (ie. the starting vertex value)
+    
     /* Additional Helper Function */
     //recursive khop helper function for k's larger than 1
     private SuperArray<String> recursiveKHop(int k, String key, SuperArray<String> sArray) {

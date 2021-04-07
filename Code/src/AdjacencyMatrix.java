@@ -181,9 +181,9 @@ public class AdjacencyMatrix extends AbstractGraph
     public String[] kHopNeighbours(int k, String vertLabel) {
         
     	try {
-	    	SuperArray<String> sArray;
+	    	SuperArray<String> sArray = new SuperArray<String>();
 	    	
-	    	LinkedList<String> list = new LinkedList<String>();
+	    	//LinkedList<String> list = new LinkedList<String>();
 	    	
 	    	//first, if the vertex given doesn't exist then warning to System.err should be issued
 	    	if (!map.containsKey(vertLabel)) {
@@ -201,16 +201,16 @@ public class AdjacencyMatrix extends AbstractGraph
 	    		//run the recursive function
 	    		//sArray = recursiveKHop(k, vertLabel, null, sArray);
 	    		
-	    		recursiveHop(k, vertLabel, list);
+	    		recursiveHop(k, vertLabel, sArray);
 	    		
 	    		/************ POSSIBLE PERFORMANCE OPTIMISATION ************/ 
 	    		//the deduplicate() will remove any duplicate vertex names and return a string[]
 	    		//need to trial whether checking for duplicates in the
-	    		//linkedin function before adding each node is faster
-	    		//return list.convertToArray().deDuplicate();
-	    		sArray = list.convertToArray();
+	    		//linked list add function before adding each node is faster
+
+	    		//sArray = list.convertToArray();
 	    		
-	    		sArray.deleteAll(vertLabel);
+	    		sArray.deleteAll(vertLabel);   // Could just return this
 	    		
 	    		return sArray.deDuplicate();
 
@@ -230,6 +230,66 @@ public class AdjacencyMatrix extends AbstractGraph
     	
     } // end of kHopNeighbours()
     
+private void recursiveHop(int k, String key, SuperArray<String> list) {
+    	
+    	if (k == 1) {
+    		
+    		//get the index 
+    		int rowIndex = map.get(key).getIndexPointer();
+    		
+    		//check the value of every column item to see if there is an edge
+    		for (String m: map.keySet()) {
+    			
+    			//exclude thyself
+    			if (!m.equals(key)) {
+    				
+    				int colIndex = map.get(m).getIndexPointer();
+    				
+	    			//now check for edges (avoid the null values in our matrix)
+		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    			//if the coordinate at this row an column contains true, then we have an edge
+		        		if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    				//add to the linkedlist
+		        			list.add(m, true);  //--skip duplicates
+	
+		    				}
+		        		}
+    				//}
+    				
+    			}
+    		}
+    		
+    	}
+    	
+    	else { //if k is higher than 1
+
+    		//get the index 
+    		int rowIndex = map.get(key).getIndexPointer();
+    		
+    		//check the value of every column item to see if there is an edge
+    		for (String m: map.keySet()) {
+    			
+    			//exclude thyself
+    			if (!m.equals(key)) {
+    				
+    				int colIndex = map.get(m).getIndexPointer();
+    				
+	    			//now check for edges (avoid the null values in our matrix)
+		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    			//if the coordinate at this row an column contains true, then we have an edge
+		        		if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    				//add to the linkedlist recursively 
+		        			list.add(m, true); //-- skip duplicates
+		        			recursiveHop(k - 1, m, list);
+		    			}
+		        	}
+
+    			}
+    		}
+    	}
+    	
+    }
+    
     private void recursiveHop(int k, String key, LinkedList<String> list) {
     	
     	if (k == 1) {
@@ -245,16 +305,12 @@ public class AdjacencyMatrix extends AbstractGraph
     				
     				int colIndex = map.get(m).getIndexPointer();
     				
-    				//we draw a diagonal line from (1,1) to (n,n) and only
-    				//look at values above that line
-    				//if (colIndex > rowIndex) {
-    				
-	    				//now check for edges (avoid the null values in our matrix)
-		        		if(adjMatrix.getObject(rowIndex, colIndex) != null) {
-		    				//if the coordinate at this row an column contains true, then we have an edge
-		        			if(adjMatrix.getObject(rowIndex, colIndex)) {
-		    					//add to the linkedlist
-		        				list.addNode(m);
+	    			//now check for edges (avoid the null values in our matrix)
+		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    			//if the coordinate at this row an column contains true, then we have an edge
+		        		if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    				//add to the linkedlist
+		        			list.addNode(m);
 	
 		    				}
 		        		}
