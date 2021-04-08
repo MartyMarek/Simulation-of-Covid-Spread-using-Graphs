@@ -191,6 +191,9 @@ public class AdjacencyList extends AbstractGraph
     //complete
     public String[] kHopNeighbours(int k, String vertLabel) {
         
+    	//Start the timer here..
+		long startTime = System.nanoTime();
+    	
     	//first, if the vertex given doesn't exist then warning to System.err should be issued
     	if (!map.containsKey(vertLabel)) {
     		
@@ -223,8 +226,11 @@ public class AdjacencyList extends AbstractGraph
     		
     		kHop.deleteAll(vertLabel); //delete the source vertex name as we don't want to list that
     		
-    		return kHop.convertToStringArray();
+    		long endTime = System.nanoTime();
+            System.out.println("Khop time: " + ((double)(endTime - startTime)) / Math.pow(10, 9));
     		
+    		return kHop.convertToStringArray();
+    		    		
     		//return recursiveKHop(k, vertLabel, kHop).convertToStringArray();
     	}
 

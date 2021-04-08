@@ -61,6 +61,66 @@ public class SuperArray<Obj> {
 		deletedIndexList = new LinkedList<Integer>();
 	}
 	
+
+	
+	public int getCurrentIndexPointer() {
+		//check if the deletedIndexList has items
+		if (deletedIndexList.getLength() > 0) {
+			return deletedIndexList.getHead().getValue();
+		}
+		
+		//otherwise return the index after the end of the array
+		return currentIndex;
+	}
+	
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+	
+	
+	public LinkedList<Integer> getDelIndexList() {
+		return deletedIndexList;
+	}
+	
+	public void setDeletedIndexList(LinkedList<Integer> list) {
+		deletedIndexList = list;
+	}
+	
+	
+	public int getTotalItems() {
+		return totalItems;
+	}
+	
+	public Obj getObject(int index) throws ArrayIndexOutOfBoundsException {
+		return array[index];
+	}
+	
+	
+	//depending on whether we already have a value on the specified spot or not, 
+	//we need to increment or decrement the total items value 
+	public void setObject(int index, Obj obj) throws ArrayIndexOutOfBoundsException {
+		if (obj == null && array[index] == null) {
+			return;
+		}
+		else if (obj == null && array[index] != null) {
+			array[index] = null;
+			totalItems--;
+		}
+		else if (obj != null && array[index] == null) {
+			array[index] = obj;
+			totalItems++;
+		}
+		else {
+			array[index] = obj;
+		}
+		
+	}
+	
+	//returns the total length of the array
+	public int getLength() {
+		return array.length;
+	}
+	
 	//adds a new object to the array (at the next available slot)
 	//Does not skip duplicates
 	public void add(Obj obj) {
@@ -137,42 +197,6 @@ public class SuperArray<Obj> {
 		}
 	}
 	
-	
-	
-	
-	
-	public int getCurrentIndex() {
-		//check if the deletedIndexList has items
-		if (deletedIndexList.getLength() > 0) {
-			return deletedIndexList.getHead().getValue();
-		}
-		
-		//otherwise return the index after the end of the array
-		return currentIndex;
-	}
-	
-	
-	public void setCurrentIndex(int newIndex) {
-		currentIndex = newIndex;
-	}
-	
-	
-	public int getTotalItems() {
-		return totalItems;
-	}
-	
-	public Obj getObject(int index) throws ArrayIndexOutOfBoundsException {
-		return array[index];
-	}
-	
-	public void setObject(int index, Obj obj) throws ArrayIndexOutOfBoundsException {
-		array[index] = obj;
-	}
-	
-	//returns the total length of the array
-	public int getLength() {
-		return array.length;
-	}
 	
 	/* WARNING: this method returns an array that can potentially
 	 * have nulls in the middle of it
@@ -542,5 +566,10 @@ public class SuperArray<Obj> {
 		
 		return list.convertToIntArray();
 	}
+	
+	public void setCurrentIndex(int newIndex) {
+		currentIndex = newIndex;
+	}
+	
 
 }

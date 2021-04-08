@@ -181,7 +181,11 @@ public class AdjacencyMatrix extends AbstractGraph
     public String[] kHopNeighbours(int k, String vertLabel) {
         
     	try {
-	    	SuperArray<String> sArray = new SuperArray<String>();
+	    	
+    		//Start the timer here..just for testing. We'll need to move this outside of this method
+    		long startTime = System.nanoTime();
+	
+    		SuperArray<String> sArray = new SuperArray<String>();
 	    	
 	    	//LinkedList<String> list = new LinkedList<String>();
 	    	
@@ -211,6 +215,9 @@ public class AdjacencyMatrix extends AbstractGraph
 	    		//sArray = list.convertToArray();
 	    		
 	    		sArray.deleteAll(vertLabel);   // Could just return this
+	    		
+	    		long endTime = System.nanoTime();
+	            System.out.println("Khop time: " + ((double)(endTime - startTime)) / Math.pow(10, 9));
 	    		
 	    		return sArray.deDuplicate();
 
@@ -358,7 +365,7 @@ private void recursiveHop(int k, String key, SuperArray<String> list) {
     	}
     	
     	os.println();
-
+    	
     } // end of printVertices()
 
     //complete

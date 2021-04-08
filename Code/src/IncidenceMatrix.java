@@ -36,8 +36,8 @@ public class IncidenceMatrix extends AbstractGraph
     public void addVertex(String vertLabel) {
     	// Create and add a new vertex to the map if vertLabel does not already exist.
     	if (!map.containsKey(vertLabel)) {
-    		map.put(vertLabel, new Vertex(incMatrix.getCurrentRowIndex()));
-    		incMatrix.addSymmetricalRow();
+    		map.put(vertLabel, new Vertex(incMatrix.getCurrentRowIndexPointer()));
+    		incMatrix.addRow();
     	}
     } // end of addVertex()
 
@@ -59,16 +59,30 @@ public class IncidenceMatrix extends AbstractGraph
     		Edge newEdgeReverse = new Edge(tarLabel, srcLabel);
     		
     		//get the current column index (this is automatically updated in SuperArray (ie SuperMatrix)
-    		Integer edgeIndex = incMatrix.getCurrentColumnIndex();
+    		Integer edgeIndex = incMatrix.getCurrentColumnIndexPointer();
     		
-    		//put the edge into the edge map. the reverse will also give us the same index
-    		edgeMap.put(newEdge, edgeIndex);
-    		edgeMap.put(newEdgeReverse, edgeIndex);
+    		//Boolean falseIndicator = false;
     		
-    		Boolean edgeIndicator = false;
-    		//add the column to the matrix (the entire column is initialised to false)
-    		incMatrix.addColumn(edgeIndicator);
-	    	
+    		/* RE-STRUCTURE THIS WHOLE SECTION */
+    		
+    		if (incMatrix.getCurrentColumnIndexPointer() == incMatrix.getCurrentColumnIndex() ) {
+
+    			edgeMap.put(newEdge, edgeIndex);
+        		edgeMap.put(newEdgeReverse, edgeIndex);
+        		
+	    		//add the column to the matrix 
+	    		incMatrix.addColumn(null);
+    		}
+    		else {
+
+    			edgeIndex = incMatrix.getCurrentColumnIndexPointer();
+    			
+    			edgeMap.put(newEdge, edgeIndex);
+        		edgeMap.put(newEdgeReverse, edgeIndex);
+        		
+        		incMatrix.addColumn(null);
+    		}
+    		
     		//now update the incidence matrix 
     		Vertex sourceVertex = map.get(srcLabel);
     		Vertex targetVertex = map.get(tarLabel);
@@ -77,7 +91,7 @@ public class IncidenceMatrix extends AbstractGraph
     		int targetIndex = targetVertex.getIndexPointer();
     		
     		//update the matrix with true values at specified coordinates 
-    		edgeIndicator = true;
+    		Boolean edgeIndicator = true;
     		
     		//source and target are the rows and edge is the column
     		incMatrix.setObject(sourceIndex, edgeIndex, edgeIndicator);
@@ -144,14 +158,21 @@ public class IncidenceMatrix extends AbstractGraph
     		}
     	}
     	
-    	String[] list = deletionList.convertToStringArray();
+    	//de-dup the list : will return an exact sized array of de-duped values 
+    	String[] list = deletionList.deDuplicate();
+    	
+    	//PLEASE NOTE: CHECK IF WE NEED TO DE-DUP (if not use below)
+    	//String[] list = deletionList.convertToStringArray();
     	//now delete all the edges
-    	for (int i = 0; i < deletionList.getTotalItems(); i++) {
+    	for (int i = 0; i < list.length; i++) {
     		deleteEdge(vertLabel, list[i]);
     	}
     	
-    	//once we have deleted all edges, we can delete the vertex
+    	//once we have deleted all edges, we can delete the vertex row from the matrix
     	incMatrix.deleteRow(map.get(vertLabel).getIndexPointer());
+    	
+    	//finally delete the vertex from the map
+    	map.remove(vertLabel);
     	
     } // end of deleteVertex()
 
@@ -173,6 +194,7 @@ public class IncidenceMatrix extends AbstractGraph
 
 
     public void printEdges(PrintWriter os) {
+    	
     	for (Edge e: edgeMap.keySet()) {
     		os.println(e.getSource() + " " + e.getTarget());
     	}

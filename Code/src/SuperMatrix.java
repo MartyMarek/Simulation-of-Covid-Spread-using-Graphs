@@ -21,6 +21,7 @@ public class SuperMatrix<Obj> {
 	
 	//keeps track of how many columns we have 
 	private int columnCount;
+
 	
 	//the default constructor will create a matrix of default array size (ie. 10 by 10)
 	public SuperMatrix() {
@@ -40,7 +41,7 @@ public class SuperMatrix<Obj> {
 		
 		rowCount = numRows;
 		columnCount = numColumns;
-		
+				
 	}
 	
 	//returns the current row index
@@ -48,9 +49,43 @@ public class SuperMatrix<Obj> {
 		return rows.getCurrentIndex();
 	}
 	
-	//returns the current column index (same as rows for symmetrical matrices) 
+	public int getCurrentRowIndexPointer() {
+		return rows.getCurrentIndexPointer();
+	}
+	
+	//returns where the next column item will go when added 
+	public int getCurrentColumnIndexPointer() {
+		
+		//we need to find the first row that has values and return its current column index
+		for (int i = 0; i < rows.getLength(); i++) {
+			if (rows.getObject(i) != null) {
+				return rows.getObject(i).getCurrentIndexPointer();
+			}
+		}
+		return 0;
+	}
+	
+	//get the column index value of the first not null row in the matrix 
 	public int getCurrentColumnIndex() {
-		return rows.getObject(0).getCurrentIndex(); //use the first row to get the column index 
+		
+		//we need to find the first row that has values and return its current column index
+		for (int i = 0; i < rows.getLength(); i++) {
+			if (rows.getObject(i) != null) {
+				return rows.getObject(i).getCurrentIndex();
+			}
+		}
+		return 0;
+	}
+	
+	public int getCurrentColumnLength() {
+		
+		//we need to find the first row that has values and return its current column length
+		for (int i = 0; i < rows.getLength(); i++) {
+			if (rows.getObject(i) != null) {
+				return rows.getObject(i).getLength();
+			}
+		}
+		return 0;
 	}
 	
 	
@@ -95,22 +130,72 @@ public class SuperMatrix<Obj> {
 		rowCount++;
 
 	}
+	
+	
+	// NEEDS REFACTORING
+	public void addRow() {
+		
+		//when we add a row in the middle 
+		if(getCurrentRowIndexPointer() < rowCount) {
+
+			rowCount--;	
+		}
+		
+		//adding a row with the length of the current column
+		SuperArray<Obj> newRow;
+		
+		if (getCurrentColumnLength() < 10) {
+			newRow = new SuperArray<Obj>(10);  //minimum of 10 columns to start
+		}
+		else {
+			newRow = new SuperArray<Obj>(getCurrentColumnLength());
+		}
+		
+		//initialise the row
+		newRow.setCurrentIndex(getCurrentColumnIndex());
+		
+		LinkedList<Integer> list = getDeletedColumnIndexList();
+		
+		if (list == null) {
+			rows.add(newRow);
+		}
+		else {
+			newRow.setDeletedIndexList(list);
+			
+			rows.add(newRow);
+			
+		}
+
+		rowCount++;
+	}
+	
+	private LinkedList<Integer> getDeletedColumnIndexList() {
+		
+		for (int i = 0; i < rowCount; i++) {
+			if (rows.getObject(i) != null) {				
+				return rows.getObject(i).getDelIndexList();
+			}
+		}
+		
+		return null;
+	}
 
 	//deletes an entire row from the matrix (doesn't actually delete it)
 	//it saves it for use by the next added vertex 
 	public void deleteRow(int rowNum) {
 		rows.deleteAtIndex(rowNum);
-	}
-	
-	public void addColumn(Obj column) throws NullPointerException {
-		for (int i = 0; i < rowCount; i++) {
-			if (rows.getObject(i) != null) {
-				rows.getObject(i).add(column);
-			}
-		}
 		
 	}
 	
+	public void addColumn(Obj column) throws NullPointerException {
+		
+		for (int i = 0; i < rowCount; i++) {
+			if (rows.getObject(i) != null) {				
+				rows.getObject(i).add(column);
+			}
+		}
+	}
+		
 	//deletes a column from the matrix 
 	public void deleteColumn(int columnNum) throws NullPointerException {
 		//iterate through each row array and delete the given index
@@ -141,12 +226,16 @@ public class SuperMatrix<Obj> {
 						System.out.print("1  ");
 					}
 				}
+				System.out.print(rows.getObject(i).getCurrentIndex() + " " + rows.getObject(i).getCurrentIndexPointer());
+				
 				System.out.println();
 			}
 			else {
-				System.out.println("null"); //print this for null rows 
+				System.out.println("null row"); //print this for null rows 
 			}
 		}
+		
+		
 	}
 	
 	/*************** MARK FOR DELETION *******************/
@@ -164,21 +253,7 @@ public class SuperMatrix<Obj> {
 	}
 	
 	
-	/* We can use addSymmetricalRow() for any matrix. the point is that
-	 * the column lengths will double when it runs out of room
-	 */
-	public void addRow() {
-		
-		//adding a row is simple just create a new array and add it
-		SuperArray<Obj> newRow = new SuperArray<Obj>();
-		rows.add(newRow);
-		
-		//if the index we added this last row is larger than our existing last row
-		//need a method in SuperArray to return the last index
-		
-		rowCount++;
-	}
-	/*****************************************************/
+	/***************************************************/
 	
 
 }
