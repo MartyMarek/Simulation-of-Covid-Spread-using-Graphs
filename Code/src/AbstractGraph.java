@@ -112,4 +112,10 @@ public abstract class AbstractGraph implements ContactsGraph
     	}
 	}
 	
+
+	//uses the data generator to create a random list of vertices from our map of vertices 
+	public void randomList(int size, PrintWriter pw) {
+		DataGenerator.pickRandom(map, size, pw);
+	}
+	
 } // end of abstract class AbstractGraph

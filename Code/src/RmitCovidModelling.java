@@ -90,6 +90,25 @@ public class RmitCovidModelling
 			try {
 				// determine which operation to execute
 				switch (command.toUpperCase()) {
+					
+					//CUSTOM COMMANDS
+					//Generate Random Vertices
+					case "GR":
+						if (tokens.length == 2) {
+							int n = Integer.parseInt(tokens[1]);
+							if (n < 1) {
+								printErrorMsg("Should be 1 or greater");
+							}
+							else {
+								((AbstractGraph)graph).randomList(n, outWriter);
+							}
+						}
+						else {
+							printErrorMsg("incorrect number of tokens.");
+						}
+						break;
+					
+				
 					// add vertex
 					case "AV":
 						if (tokens.length == 2) {
