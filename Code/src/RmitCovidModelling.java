@@ -154,19 +154,33 @@ public class RmitCovidModelling
 							else {
 																
 								String[] randList = ((AbstractGraph)graph).randomListArray(inputSize);
-								//double[] timeList = new double[inputSize];
+								
 								double totalTime = 0.0;
+								double prog = 0.1;
+								
+								System.out.print("Progress % -> 0% -> ");
 								
 								//for each randomly generated vertex, run the khop and record it's time
 								for (int i = 0; i < randList.length; i++) {
 									long startTime = System.nanoTime(); //start time just before method call..
 									
-									graph.kHopNeighbours(k, tokens[2]);
+									graph.kHopNeighbours(k, randList[i]);
 									
 									long endTime = System.nanoTime(); //end time just after method call
 									
 									totalTime += (((double)(endTime - startTime)) / Math.pow(10, 9));
+									
+									//display percentage of progress
+									if (i > 0) {
+										if ((randList.length / i > prog) && (prog <= 0.9)) {
+											System.out.print((Math.round(prog * 10)*10) + " % -> ");
+											prog = prog + 0.1;
+										}
+									}
+									
 								}
+								
+								System.out.println("Done.");
 								
 								//get the average time
 								totalTime = totalTime / inputSize;
