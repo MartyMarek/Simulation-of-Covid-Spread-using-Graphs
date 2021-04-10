@@ -91,8 +91,11 @@ public class RmitCovidModelling
 				// determine which operation to execute
 				switch (command.toUpperCase()) {
 					
-					//CUSTOM COMMANDS
-					//Generate Random Vertices
+					//The original commands remain the same, added new commands to cater for part B
+					//CUSTOM COMMANDS ("GR", "KNT")
+				
+					// GR - Generate a list (of input size) of Random Vertices from the currently loaded graph
+					// GR {list size}
 					case "GR":
 						if (tokens.length == 2) {
 							int n = Integer.parseInt(tokens[1]);
@@ -108,6 +111,74 @@ public class RmitCovidModelling
 						}
 						break;
 					
+						//KNT - khop with a time measurement with given khop depth and vertex name 
+						// KNT {khop depth} {starting vertex name}
+					case "KNT":
+						outWriter.println("# " + line);
+						if (tokens.length == 3) {
+							int k = Integer.parseInt(tokens[1]);
+							if (k < 0) {
+								printErrorMsg("k should be 0 or greater");
+							}
+							else {
+								long startTime = System.nanoTime(); //start time just before method call..
+								
+								graph.kHopNeighbours(k, tokens[2]);
+								
+								long endTime = System.nanoTime(); //end time just after method call
+
+								outWriter.print("Time taken for " + k + " khops: ");
+								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								
+							}
+						}
+						else {
+							printErrorMsg("incorrect number of tokens.");
+						}
+						break;
+					
+						// KNTA - khop average time based khop depth and number of randomly selected vertices
+						// KNTA {khop depth} {number of random vertices to run}
+					case "KNTA":
+						outWriter.println("# " + line);
+						if (tokens.length == 3) {
+							int k = Integer.parseInt(tokens[1]);
+							int inputSize = Integer.parseInt(tokens[2]);
+							
+							if (k < 0) {
+								printErrorMsg("k should be 0 or greater");
+							}
+							else if (inputSize < 1 || inputSize > ((AbstractGraph)graph).getVertexSize()) {
+								printErrorMsg("Vertex input size should be 1 or greater, but cannot be larger than the number of total vertices");
+							}
+							else {
+																
+								String[] randList = ((AbstractGraph)graph).randomListArray(inputSize);
+								//double[] timeList = new double[inputSize];
+								double totalTime = 0.0;
+								
+								//for each randomly generated vertex, run the khop and record it's time
+								for (int i = 0; i < randList.length; i++) {
+									long startTime = System.nanoTime(); //start time just before method call..
+									
+									graph.kHopNeighbours(k, tokens[2]);
+									
+									long endTime = System.nanoTime(); //end time just after method call
+									
+									totalTime += (((double)(endTime - startTime)) / Math.pow(10, 9));
+								}
+								
+								//get the average time
+								totalTime = totalTime / inputSize;
+
+								outWriter.println("Average time taken for " + inputSize + " runs of khop depth " + k + " was: " + totalTime + " seconds");
+
+							}
+						}
+						else {
+							printErrorMsg("incorrect number of tokens.");
+						}
+						break;
 				
 					// add vertex
 					case "AV":

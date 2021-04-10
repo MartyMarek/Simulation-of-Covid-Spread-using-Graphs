@@ -56,7 +56,7 @@ public class AdjacencyList extends AbstractGraph
         
     	try {
 	    	//first we need to check that both labels exist
-	    	if (map.containsKey(srcLabel) && map.containsKey(tarLabel) ) {
+	    	if (map.containsKey(srcLabel) && map.containsKey(tarLabel)) {
 	    		
 	    		//now we get the source vertex and its index in the array
 	    		Vertex vertex = map.get(srcLabel);
@@ -86,7 +86,14 @@ public class AdjacencyList extends AbstractGraph
 	    	}
 	    	else {
 	    		//issue system error
-	    		System.err.println("> Vertex does not exists! Edge NOT added.");
+	    		//System.err.println("> Vertex does not exists! Edge NOT added.");
+	    		
+	    		if (map.containsKey(srcLabel) && !map.containsKey(tarLabel)) {
+	    			System.err.println("> Vertex " + tarLabel + " does not exists! Edge NOT added.");
+	    		}
+	    		else {
+	    			System.err.println("> Vertex " + srcLabel + " does not exists! Edge NOT added.");
+	    		}
 	    	}
     	}
 	    catch (ArrayIndexOutOfBoundsException aie) {
@@ -190,9 +197,6 @@ public class AdjacencyList extends AbstractGraph
 
     //complete
     public String[] kHopNeighbours(int k, String vertLabel) {
-        
-    	//Start the timer here..
-		long startTime = System.nanoTime();
     	
     	//first, if the vertex given doesn't exist then warning to System.err should be issued
     	if (!map.containsKey(vertLabel)) {
@@ -225,9 +229,6 @@ public class AdjacencyList extends AbstractGraph
     		recursiveKHop(k, vertLabel, kHop);
     		
     		kHop.deleteAll(vertLabel); //delete the source vertex name as we don't want to list that
-    		
-    		long endTime = System.nanoTime();
-            System.out.println("Khop time: " + ((double)(endTime - startTime)) / Math.pow(10, 9));
     		
     		return kHop.convertToStringArray();
     		    		

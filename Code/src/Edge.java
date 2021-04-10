@@ -33,7 +33,7 @@ public final class Edge {
 	//ie. AB BA create the same hashcode. if we do that we would not need to store both 
 	//combinations separately for the incidence matrix
 	public int hashCode() {
-		return String.join(source, target).hashCode();
+		return (String.join("<->", source, target)).hashCode();
 	}
 	
 	//Need to override the equals method. equals will return true as long as both 

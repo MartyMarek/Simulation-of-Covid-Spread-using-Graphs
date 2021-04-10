@@ -118,4 +118,12 @@ public abstract class AbstractGraph implements ContactsGraph
 		DataGenerator.pickRandom(map, size, pw);
 	}
 	
+	public String[] randomListArray(int size) {
+		return DataGenerator.pickRandom(map, size);
+	}
+	
+	public int getVertexSize() {
+		return map.size();
+	}
+	
 } // end of abstract class AbstractGraph
