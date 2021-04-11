@@ -39,9 +39,21 @@ public class LinkedList<Obj> {
 		return tail;
 	}
 	
+	// Return the value at location in list.
+	// Starting position = 0
+	public Node<Obj> get(int index) {
+		if (index > length-1 || index < 0)
+			return null;
+		Node<Obj> indexPos = head;
+		for (int i=0; i < index; i++)
+			indexPos = indexPos.getNext();
+		return indexPos;
+	}
+	
 	public void destroy() {
 		head = null;
 		tail = null;
+		length = 0;
 	}
 	
 	//this method adds a new generic object to the end of the list
@@ -86,6 +98,26 @@ public class LinkedList<Obj> {
 		
 		return this;
 		
+	}
+	
+	// Deletes the first node in the list (Head).
+	public void dequeue() throws NullPointerException {
+		//if the list is empty, do nothing
+		if (length == 0) {
+			return;
+		}
+
+		//if there is only 1 item in the list check if its equal 
+		if (length == 1) {
+				head = null;
+				tail = null;
+				length--;
+			return;
+		}
+
+		head = head.getNext();
+		length--;
+		return;
 	}
 	
 	//deletes a node from the linked list based on the parameter provided

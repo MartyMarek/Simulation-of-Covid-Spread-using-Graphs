@@ -100,6 +100,14 @@ public class SuperMatrix<Obj> {
 		return rows.getObject(index);
 	}
 	
+	//return an entire row based on a given row index
+	public SuperArray<Obj> getColumn(int index) {
+		SuperArray<Obj> col = new SuperArray<Obj>();
+		for (int r=0; r < rowCount; r++) 
+			col.add(rows.getObject(r).getObject(index));
+		return col;
+	}
+	
 	//sets the object at a given row/column
 	//rows and columns start at 0
 	public void setObject(int row, int column, Obj obj) throws ArrayIndexOutOfBoundsException {
@@ -206,38 +214,37 @@ public class SuperMatrix<Obj> {
 		}
 	}
 	
-
 	//Please note: this is for testing purposes only, don't run this with a large matrix
 	public void printMatrix() {
 		
 		int i = 0;
-		int j = 0;
 		
-		for (i = 0; i < rowCount; i++) {
-			if (rows.getObject(i) != null) {
-				for (j = 0; j < rows.getObject(i).getLength(); j++) {
-					if (rows.getObject(i).getObject(j) == null) {
-						System.out.print("n  ");
-					}
-					else if( (Boolean)rows.getObject(i).getObject(j) == false) {
-						System.out.print("0  ");
-					}
-					else {
-						System.out.print("1  ");
-					}
-				}
-				System.out.print(rows.getObject(i).getCurrentIndex() + " " + rows.getObject(i).getCurrentIndexPointer());
-				
-				System.out.println();
-			}
-			else {
-				System.out.println("null row"); //print this for null rows 
-			}
+		for (i = 0; i < rowCount; i++) {			
+				printRow(i);
 		}
-		
-		
 	}
-	
+
+	//Please note: this is for testing purposes only, don't run this with a large matrix
+	public void printRow(int row) {
+		if (rows.getObject(row) != null) {
+			for (int j = 0; j < rows.getObject(row).getLength(); j++) {
+				if (rows.getObject(row).getObject(j) == null) {
+					System.out.print("n  ");
+				}
+				else if( (Boolean)rows.getObject(row).getObject(j) == false) {
+					System.out.print("0  ");
+				}
+				else {
+					System.out.print("1  ");
+				}
+			}
+			System.out.print(rows.getObject(row).getCurrentIndex() + " " + rows.getObject(row).getCurrentIndexPointer());
+			System.out.println();
+		}
+		else {
+			System.out.println("null row"); //print this for null rows 
+		}			
+	}
 	/*************** MARK FOR DELETION *******************/
 	
 	/* current dependency - IncidenceMatrixOriginal.addEdge() */
