@@ -61,6 +61,7 @@ public class LinkedList<Obj> {
 		return tail;
 	}
 	
+	//****************** MARKED FOR DELETION ****************/
 	// Return the value at location in list.
 	// Starting position = 0
 	public Node<Obj> get(int index) {
@@ -71,6 +72,8 @@ public class LinkedList<Obj> {
 			indexPos = indexPos.getNext();
 		return indexPos;
 	}
+	
+	/********************************************************/
 	
 	public void destroy() {
 		head = null;

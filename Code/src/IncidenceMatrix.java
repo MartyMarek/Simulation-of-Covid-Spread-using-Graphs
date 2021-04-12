@@ -190,6 +190,8 @@ public class IncidenceMatrix extends AbstractGraph
 	    		else { 		
 	    			recursiveKhop(k, vertLabel, khopResult);
 	    			
+	    			khopResult.deleteAll(vertLabel);
+	    			
 	    			return khopResult.deDuplicate();
 	    		}
 	    		
