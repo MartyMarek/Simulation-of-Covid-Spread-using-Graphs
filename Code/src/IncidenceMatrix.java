@@ -176,6 +176,67 @@ public class IncidenceMatrix extends AbstractGraph
     	
     } // end of deleteVertex()
 
+    
+    public String[] kHopNeighbours(int k, String vertLabel) {
+    	
+    	SuperArray<String> khopResult = new SuperArray<String>();
+    	
+    	try {
+	    	if (map.containsKey(vertLabel)) {
+	    		
+	    		if (k <= 0) {
+	    			return new String[0];
+	    		}
+	    		else { 		
+	    			recursiveKhop(k, vertLabel, khopResult);
+	    			
+	    			return khopResult.deDuplicate();
+	    		}
+	    		
+	    	}
+	    	else {
+	    		//Sys error 
+	    		return new String[0];
+	    	}
+    	
+	    }
+	    catch (NullPointerException npe) {
+	    	//if we are passed a null string do nothing
+	    	return new String[0];
+	    }
+	    catch (Exception e) {
+	    	//unknown error
+	    	System.err.println(e.getMessage());
+	    	return new String[0];
+	    }
+	    
+	    
+    }
+    
+    private void recursiveKhop(int k, String vertLabel, SuperArray<String> result) {
+    	
+    	if (k == 1) {
+    		//get each neighbour and add it
+    		for (Edge e: edgeMap.keySet()) {
+    			if(e.getSource().equals(vertLabel)) {
+    				result.add(e.getTarget());
+    			}
+    			
+    		}
+    	}
+    	
+    	if (k > 1) {
+    		for (Edge e: edgeMap.keySet()) {
+    			if(e.getSource().equals(vertLabel)) {
+    				result.add(e.getTarget());
+    				recursiveKhop(k - 1, e.getTarget(), result);
+    			}
+    			
+    		}
+    	}
+    }
+    
+    /*
 
     public String[] kHopNeighbours(int k, String vertLabel) {
 
@@ -192,14 +253,15 @@ public class IncidenceMatrix extends AbstractGraph
 	    		return new String[0];
 	    	}
 	    	else if (k >= 1) {
-	    		LinkedList<String> currentHopList = new LinkedList<String>();
+	    		//LinkedList<String> currentHopList = new LinkedList<String>();
+	    		LinkedList<String> currentHopList;
 	    		LinkedList<String> nextHopList = new LinkedList<String>();
 	    		SuperArray<String> neighbourList = new SuperArray<String>();
 	    		int currentDepth = 0;
 	    		Vertex targetVertex = new Vertex();
 	    		LinkedList<Vertex> visitedList = new LinkedList<Vertex>();
-	    		//Start the timer here..just for testing. We'll need to move this outside of this method
-	    		long startTime = System.nanoTime();
+	    		
+	    		Node<String> head;
 	    		
 	    		// Start the search with the beginning node.
 	    		map.get(vertLabel).setVisited();
@@ -207,8 +269,13 @@ public class IncidenceMatrix extends AbstractGraph
 
 	    		while (currentDepth < k) {
 //	    			incMatrix.printMatrix();
-	    			currentHopList = nextHopList;
-	    			// nextHopList.destroy();  // Need to be able to destroy this without messing up currentHopList :(
+	    			
+	    			
+	    			//copy the head to the new linked list
+	    			head = new Node<String>(nextHopList.getHead().getValue(), nextHopList.getHead().getNext()); //this is ugly
+	    			currentHopList = new LinkedList<String>(head, nextHopList.getLength());
+	    			//currentHopList = nextHopList;
+	    			nextHopList.destroy();  // Need to be able to destroy this without messing up currentHopList :(
 	    			for (int n=0; n < currentHopList.getLength(); n++) {
 	    				vertLabel = currentHopList.get(n).getValue();
 //	    				System.out.println("Checking: " + vertLabel);
@@ -220,7 +287,8 @@ public class IncidenceMatrix extends AbstractGraph
 			    	    			if (!targetVertex.getVisited()) {
 			    	    				targetVertex.setVisited();
 			    	    				nextHopList.addNode(e.getTarget());
-			    	    				visitedList.addNode(targetVertex);
+			    	    				
+			    	    				visitedList.addNode(targetVertex); //what's this for, it's not used anywhere?
 			    	    			}	    				
 		    	    			}
 		    	    		}	    							
@@ -230,8 +298,7 @@ public class IncidenceMatrix extends AbstractGraph
 	    			currentDepth++;
 	    		}
 	    		
-	    		long endTime = System.nanoTime();
-	            System.out.println("Khop time: " + ((double)(endTime - startTime)) / Math.pow(10, 9));
+	    		
 	    		// TODO: Reset all visited nodes for next search...	
 	            
 	            return neighbourList.convertToStringArray();
@@ -249,6 +316,7 @@ public class IncidenceMatrix extends AbstractGraph
     	} 
     } // end of kHopNeighbours()
 
+*/
     
      public void printVertices(PrintWriter os) {
     	for (String n: map.keySet()) {

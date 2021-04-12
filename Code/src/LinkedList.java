@@ -25,6 +25,28 @@ public class LinkedList<Obj> {
 		length = 0;
 	}
 	
+	//constructor with an initial head node
+	public LinkedList(Node<Obj> head) {
+		this.head = head;
+		this.tail = head;
+		length = 1;
+	}
+	
+	//constructor to copy another linked list. 
+	public LinkedList(Node<Obj> head, int length) {
+		this.head = head;
+		
+		this.length = length;
+		
+		//to set the tail we must find the last node
+		Node<Obj> pointer = head;
+		
+		while(pointer.getNext() != null) {
+			pointer = pointer.getNext();
+		}
+		tail = pointer;
+	}
+	
 	//get method for the length (note: we have no set method because you should
 	//not be able to set length from outside the LinkedList Class
 	public int getLength() {
