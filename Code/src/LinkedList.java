@@ -9,7 +9,6 @@
  *
  ****************************************************************************************************/
 
-
 public class LinkedList<Obj> {
 	
 	private Node<Obj> head;
@@ -33,6 +32,7 @@ public class LinkedList<Obj> {
 	}
 	
 	//constructor to copy another linked list. 
+	//CAUTION USING THIS - USE WITH CARE
 	public LinkedList(Node<Obj> head, int length) {
 		this.head = head;
 		
@@ -60,20 +60,6 @@ public class LinkedList<Obj> {
 	public Node<Obj> getTail() {
 		return tail;
 	}
-	
-	//****************** MARKED FOR DELETION ****************/
-	// Return the value at location in list.
-	// Starting position = 0
-	public Node<Obj> get(int index) {
-		if (index > length-1 || index < 0)
-			return null;
-		Node<Obj> indexPos = head;
-		for (int i=0; i < index; i++)
-			indexPos = indexPos.getNext();
-		return indexPos;
-	}
-	
-	/********************************************************/
 	
 	public void destroy() {
 		head = null;
@@ -182,8 +168,7 @@ public class LinkedList<Obj> {
 		//if there are more than 2 items in our list we iterate through 
 		//the list recursively until we find a match or run out of nodes 
 		recursiveDelete(null, head, deleteObj);
-		
-		
+
 	}
 	
 	//helper function to the deleteNode method, that recursively iterates through the list
@@ -234,7 +219,6 @@ public class LinkedList<Obj> {
 		while(pointer != tail);
 		
 		return false;
-		
 	}
 	
 	//this method converts the linked list of objects into an array of the same object
@@ -275,5 +259,18 @@ public class LinkedList<Obj> {
 		}
 	}
 
+	//****************** MARKED FOR DELETION ****************/
+		// Return the value at location in list.
+		// Starting position = 0
+		/*public Node<Obj> get(int index) {
+			if (index > length-1 || index < 0)
+				return null;
+			Node<Obj> indexPos = head;
+			for (int i=0; i < index; i++)
+				indexPos = indexPos.getNext();
+			return indexPos;
+		} */
+		
+		/********************************************************/
 
 }

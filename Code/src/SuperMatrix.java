@@ -140,12 +140,11 @@ public class SuperMatrix<Obj> {
 	}
 	
 	
-	// NEEDS REFACTORING
+	//adds a row to the matrix and sync deleted index numbers to the new row as well
 	public void addRow() {
 		
 		//when we add a row in the middle 
 		if(getCurrentRowIndexPointer() < rowCount) {
-
 			rowCount--;	
 		}
 		
@@ -162,6 +161,8 @@ public class SuperMatrix<Obj> {
 		//initialise the row
 		newRow.setCurrentIndex(getCurrentColumnIndex());
 		
+		//we also needs to assign the current deleted index list to the new row 
+		//so that it's in sync with all other rows. 
 		LinkedList<Integer> list = getDeletedColumnIndexList();
 		
 		if (list == null) {
@@ -169,11 +170,8 @@ public class SuperMatrix<Obj> {
 		}
 		else {
 			newRow.setDeletedIndexList(list);
-			
 			rows.add(newRow);
-			
 		}
-
 		rowCount++;
 	}
 	
@@ -184,7 +182,6 @@ public class SuperMatrix<Obj> {
 				return rows.getObject(i).getDelIndexList();
 			}
 		}
-		
 		return null;
 	}
 
@@ -245,22 +242,6 @@ public class SuperMatrix<Obj> {
 			System.out.println("null row"); //print this for null rows 
 		}			
 	}
-	/*************** MARK FOR DELETION *******************/
-	
-	/* current dependency - IncidenceMatrixOriginal.addEdge() */
-	public void addColumn() throws NullPointerException {
-		// Needed for incidence matrix and need to add to ensure array resize
-		// occurs when we hit allocated limit.		
-		for (int i = 0; i < rowCount; i++) {
-			if (rows.getObject(i) != null) {
-				rows.getObject(i).add(null);
-			}
-		}
-		columnCount++; //columncount should not be incremented here.
-	}
-	
-	
-	/***************************************************/
 	
 
 }

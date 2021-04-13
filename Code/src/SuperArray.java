@@ -61,8 +61,8 @@ public class SuperArray<Obj> {
 		deletedIndexList = new LinkedList<Integer>();
 	}
 	
-
-	
+	//this returns the index where the next element will be added to
+	//(including the indexes that are saved in the delete list
 	public int getCurrentIndexPointer() {
 		//check if the deletedIndexList has items
 		if (deletedIndexList.getLength() > 0) {
@@ -73,26 +73,37 @@ public class SuperArray<Obj> {
 		return currentIndex;
 	}
 	
+	//this returns the next index value ignoring the deleted index values
 	public int getCurrentIndex() {
 		return currentIndex;
 	}
 	
-	
 	public LinkedList<Integer> getDelIndexList() {
 		return deletedIndexList;
-	}
+	} 
 	
-	public void setDeletedIndexList(LinkedList<Integer> list) {
-		deletedIndexList = list;
-	}
-	
-	
+	//total number of stored items
 	public int getTotalItems() {
 		return totalItems;
 	}
 	
 	public Obj getObject(int index) throws ArrayIndexOutOfBoundsException {
 		return array[index];
+	}
+	
+	//returns the total length of the array (store length not number of items)
+	public int getLength() {
+		return array.length;
+	}
+	
+	//USE WITH CARE
+	public void setCurrentIndex(int newIndex) {
+		currentIndex = newIndex;
+	}
+	
+	//USE WITH CARE
+	public void setDeletedIndexList(LinkedList<Integer> list) {
+		deletedIndexList = list;
 	}
 	
 	
@@ -116,10 +127,6 @@ public class SuperArray<Obj> {
 		
 	}
 	
-	//returns the total length of the array
-	public int getLength() {
-		return array.length;
-	}
 	
 	//adds a new object to the array (at the next available slot)
 	//Does not skip duplicates
@@ -553,23 +560,6 @@ public class SuperArray<Obj> {
 		array = tempArray;
 		
 	}
-	
-	/* MARKED FOR DELETION */
-	public int[] getLiveIndexList() {
-		SuperArray<Integer> list = new SuperArray<Integer>();
 		
-		for (int i = 0; i < array.length; i++) {
-			if (array[i] != null) {
-				list.add(i);
-			}
-		}
-		
-		return list.convertToIntArray();
-	}
-	
-	public void setCurrentIndex(int newIndex) {
-		currentIndex = newIndex;
-	}
-	
 
 }

@@ -68,7 +68,6 @@ public class AdjacencyList extends AbstractGraph
 	    			if(!list.find(tarLabel)) {
 	    				list.addNode(tarLabel); 
 	    			}
-	    			
 	    		}
 	    		
 	    		//undirectred graph so now do the above in reverse (add source to the targets adj list)
@@ -81,12 +80,9 @@ public class AdjacencyList extends AbstractGraph
 	    			if(!list.find(srcLabel)) {
 	    				list.addNode(srcLabel); 
 	    			}
-	    			
 	    		}
 	    	}
 	    	else {
-	    		//issue system error
-	    		//System.err.println("> Vertex does not exists! Edge NOT added.");
 	    		
 	    		if (map.containsKey(srcLabel) && !map.containsKey(tarLabel)) {
 	    			System.err.println("> Vertex " + tarLabel + " does not exists! Edge NOT added.");
@@ -231,8 +227,7 @@ public class AdjacencyList extends AbstractGraph
     		kHop.deleteAll(vertLabel); //delete the source vertex name as we don't want to list that
     		
     		return kHop.convertToStringArray();
-    		    		
-    		//return recursiveKHop(k, vertLabel, kHop).convertToStringArray();
+ 
     	}
 
     } // end of kHopNeighbours()
@@ -269,11 +264,8 @@ public class AdjacencyList extends AbstractGraph
     			
     			iterator = iterator.getNext();
     		}  
-    		
     		return sArray;
-    		
     	}
-    	
     }
 
     //complete

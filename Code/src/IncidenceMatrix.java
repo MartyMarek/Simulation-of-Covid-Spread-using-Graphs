@@ -42,6 +42,7 @@ public class IncidenceMatrix extends AbstractGraph
     } // end of addVertex()
 
 
+    //REFACTOR
     public void addEdge(String srcLabel, String tarLabel) {
     	// Don't allow self loops.
     	if (srcLabel.equals(tarLabel)) {
@@ -194,7 +195,6 @@ public class IncidenceMatrix extends AbstractGraph
 	    			
 	    			return khopResult.deDuplicate();
 	    		}
-	    		
 	    	}
 	    	else {
 	    		//Sys error 
@@ -215,6 +215,7 @@ public class IncidenceMatrix extends AbstractGraph
 	    
     }
     
+    //helper function for the khop
     private void recursiveKhop(int k, String vertLabel, SuperArray<String> result) {
     	
     	if (k == 1) {
@@ -238,88 +239,7 @@ public class IncidenceMatrix extends AbstractGraph
     	}
     }
     
-    /*
-
-    public String[] kHopNeighbours(int k, String vertLabel) {
-
-    	try {
-	    	if (!map.containsKey(vertLabel)) {
-    		
-	    		//issue system error
-	    		System.err.println("> Vertex does not exists!");
-	    		
-	    		//and return a small empty string array 
-	    		return new String[0];
-	    	}
-	    	else if (k <= 0) { //if k is 0 or less return an empty array
-	    		return new String[0];
-	    	}
-	    	else if (k >= 1) {
-	    		//LinkedList<String> currentHopList = new LinkedList<String>();
-	    		LinkedList<String> currentHopList;
-	    		LinkedList<String> nextHopList = new LinkedList<String>();
-	    		SuperArray<String> neighbourList = new SuperArray<String>();
-	    		int currentDepth = 0;
-	    		Vertex targetVertex = new Vertex();
-	    		LinkedList<Vertex> visitedList = new LinkedList<Vertex>();
-	    		
-	    		Node<String> head;
-	    		
-	    		// Start the search with the beginning node.
-	    		map.get(vertLabel).setVisited();
-	    		nextHopList.addNode(vertLabel);
-
-	    		while (currentDepth < k) {
-//	    			incMatrix.printMatrix();
-	    			
-	    			
-	    			//copy the head to the new linked list
-	    			head = new Node<String>(nextHopList.getHead().getValue(), nextHopList.getHead().getNext()); //this is ugly
-	    			currentHopList = new LinkedList<String>(head, nextHopList.getLength());
-	    			//currentHopList = nextHopList;
-	    			nextHopList.destroy();  // Need to be able to destroy this without messing up currentHopList :(
-	    			for (int n=0; n < currentHopList.getLength(); n++) {
-	    				vertLabel = currentHopList.get(n).getValue();
-//	    				System.out.println("Checking: " + vertLabel);
-		    	    	for (Edge e: edgeMap.keySet()) {
-		    	    		if (e.getSource().equals(vertLabel)) {  // Need to add reverse direction here as well! Just trying to get it working one way first!
-		    	    			neighbourList.add(e.getTarget());
-		    	    			targetVertex = map.get(e.getTarget());
-		    	    			if (currentDepth < k-1) {
-			    	    			if (!targetVertex.getVisited()) {
-			    	    				targetVertex.setVisited();
-			    	    				nextHopList.addNode(e.getTarget());
-			    	    				
-			    	    				visitedList.addNode(targetVertex); //what's this for, it's not used anywhere?
-			    	    			}	    				
-		    	    			}
-		    	    		}	    							
-		    			}
-	    			}
-//	    			System.out.println("Length: " + nextHopList.getLength());
-	    			currentDepth++;
-	    		}
-	    		
-	    		
-	    		// TODO: Reset all visited nodes for next search...	
-	            
-	            return neighbourList.convertToStringArray();
-	    	}	    	
-	    	return new String[0];
-    	}
-    	catch (NullPointerException npe) {
-    		//if we are passed a null string do nothing
-    		return new String[0];
-    	}
-    	catch (Exception e) {
-    		//unknown error
-    		System.err.println(e.getMessage());
-    		return new String[0];
-    	} 
-    } // end of kHopNeighbours()
-
-*/
-    
+     
      public void printVertices(PrintWriter os) {
     	for (String n: map.keySet()) {
     		os.print("(" + n + "," + map.get(n).getState().toString() + ") ");

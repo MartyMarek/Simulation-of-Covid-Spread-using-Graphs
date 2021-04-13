@@ -15,9 +15,6 @@ public class Vertex {
 	
 	//we also store the SIR State in each Vertex
 	private SIRState state;
-
-	//we also store the SIR State in each Vertex
-	private boolean visited;
 	
 	//default constructor 
 	public Vertex() {
@@ -27,9 +24,7 @@ public class Vertex {
 		
 		//our default state value is S - susceptible 
 		state =  SIRState.S;
-		
-		// Default state of unvisited.
-		visited = false;
+
 	}
 	
 	public Vertex(int index) throws IndexOutOfBoundsException {
@@ -46,7 +41,6 @@ public class Vertex {
 		
 	}
 	
-	
 	//get methods
 	public SIRState getState() {
 		return state;
@@ -58,18 +52,6 @@ public class Vertex {
 	
 	public int getIndexPointer() {
 		return indexPointer;
-	}
-	
-	public boolean getVisited() {
-		return visited;
-	}
-
-	public void setVisited() {
-		visited = true;
-	}
-
-	public void setUnvisited() {
-		visited = false;
 	}
 	
 	//this method toggles the state enum from S to I to R. 
@@ -84,7 +66,6 @@ public class Vertex {
 		}
 		
 		return state;
-		
 	}
 
 }

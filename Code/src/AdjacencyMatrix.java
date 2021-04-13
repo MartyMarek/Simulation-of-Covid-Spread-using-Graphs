@@ -62,6 +62,7 @@ public class AdjacencyMatrix extends AbstractGraph
 	    		Vertex sourceVertex = map.get(srcLabel);
 	    		Vertex targetVertex = map.get(tarLabel);
 	    		
+	    		//get the index pointers for both row and column
 	    		int sourceIndex = sourceVertex.getIndexPointer();
 	    		int targetIndex = targetVertex.getIndexPointer();
 	    		
@@ -181,13 +182,7 @@ public class AdjacencyMatrix extends AbstractGraph
     public String[] kHopNeighbours(int k, String vertLabel) {
         
     	try {
-	    	
-    		//Start the timer here..just for testing. We'll need to move this outside of this method
-    		long startTime = System.nanoTime();
-	
-    		SuperArray<String> sArray = new SuperArray<String>();
-	    	
-	    	//LinkedList<String> list = new LinkedList<String>();
+	    	SuperArray<String> sArray = new SuperArray<String>();
 	    	
 	    	//first, if the vertex given doesn't exist then warning to System.err should be issued
 	    	if (!map.containsKey(vertLabel)) {
@@ -202,8 +197,6 @@ public class AdjacencyMatrix extends AbstractGraph
 	    		return new String[0];
 	    	}
 	    	else if (k >= 1) {
-	    		//run the recursive function
-	    		//sArray = recursiveKHop(k, vertLabel, null, sArray);
 	    		
 	    		recursiveHop(k, vertLabel, sArray);
 	    		
@@ -214,11 +207,7 @@ public class AdjacencyMatrix extends AbstractGraph
 
 	    		//sArray = list.convertToArray();
 	    		
-	    		sArray.deleteAll(vertLabel);   // Could just return this
-	    		
-	    		long endTime = System.nanoTime();
-	            System.out.println("Khop time: " + ((double)(endTime - startTime)) / Math.pow(10, 9));
-	    		
+	    		sArray.deleteAll(vertLabel);   // Could just return this	    		
 	    		return sArray.deDuplicate();
 
 	    	}
@@ -259,15 +248,13 @@ private void recursiveHop(int k, String key, SuperArray<String> list) {
 		    				//add to the linkedlist
 		        			list.add(m, true);  //--skip duplicates
 	
-		    				}
-		        		}
-    				//}
+		    			}
+		        	}
     				
     			}
     		}
     		
     	}
-    	
     	else { //if k is higher than 1
 
     		//get the index 
@@ -290,13 +277,54 @@ private void recursiveHop(int k, String key, SuperArray<String> list) {
 		        			recursiveHop(k - 1, m, list);
 		    			}
 		        	}
-
     			}
     		}
     	}
-    	
     }
     
+    //complete
+    public void printVertices(PrintWriter os) {
+    	
+    	for (String n: map.keySet()) {
+    		os.print("(" + n + "," + map.get(n).getState().toString() + ") ");
+    	}
+    	
+    	os.println();
+    	
+    } // end of printVertices()
+
+    //complete
+    public void printEdges(PrintWriter os) {
+        
+    	int rowIndex = 0;
+		int colIndex = 0;
+    	
+    	try {
+	    	for (String n: map.keySet()) {
+	    		
+	    		//get the index 
+	    		rowIndex = map.get(n).getIndexPointer();
+	    		
+	    		for (String m: map.keySet()) {
+	    			//get the index 
+	        		colIndex = map.get(m).getIndexPointer();
+	        		
+		        	//now check for edges (avoid the null values in our matrix)
+		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    			if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    				os.println(n + " " + m);
+		    			}
+		    		}
+	    		}
+	    	}
+    	}
+    	catch (ArrayIndexOutOfBoundsException ae) {
+    		System.err.println("> Internal Array Access Error. BAD");
+    	}
+
+    } // end of printEdges()
+    
+    /* MARKED FOR DELETION
     private void recursiveHop(int k, String key, LinkedList<String> list) {
     	
     	if (k == 1) {
@@ -355,50 +383,6 @@ private void recursiveHop(int k, String key, SuperArray<String> list) {
     		}
     	}
     	
-    }
-    
-    //complete
-    public void printVertices(PrintWriter os) {
-    	
-    	for (String n: map.keySet()) {
-    		os.print("(" + n + "," + map.get(n).getState().toString() + ") ");
-    	}
-    	
-    	os.println();
-    	
-    } // end of printVertices()
-
-    //complete
-    public void printEdges(PrintWriter os) {
-        
-    	int rowIndex = 0;
-		int colIndex = 0;
-    	
-    	try {
-	    	for (String n: map.keySet()) {
-	    		
-	    		//get the index 
-	    		rowIndex = map.get(n).getIndexPointer();
-	    		
-	    		for (String m: map.keySet()) {
-	    			//get the index 
-	        		colIndex = map.get(m).getIndexPointer();
-	        		
-		        	//now check for edges (avoid the null values in our matrix)
-		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
-		    			if(adjMatrix.getObject(rowIndex, colIndex)) {
-		    				os.println(n + " " + m);
-		    			}
-		    		}
-	    		}
-	    	}
-    	}
-    	catch (ArrayIndexOutOfBoundsException ae) {
-    		System.err.println("> Internal Array Access Error. BAD");
-    	}
-
-    } // end of printEdges()
-    
-    
+    } */
 
 } // end of class AdjacencyMatrix

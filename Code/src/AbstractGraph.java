@@ -18,11 +18,6 @@ public abstract class AbstractGraph implements ContactsGraph
 	//create the map here as every type of graph will use this
 	protected HashMap<String, Vertex> map;
 	
-	//private StatusList sList;
-	
-	//keeps track of the total number of infected nodes in the graph
-	//protected int totalInfectedNodes;
-	
 	//default constructor
 	public AbstractGraph() {
 		map = new HashMap<String, Vertex>();
