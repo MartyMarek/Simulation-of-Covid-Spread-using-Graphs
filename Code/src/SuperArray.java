@@ -452,6 +452,9 @@ public class SuperArray<Obj> {
 		
 		try {
 			if (low < high) {
+				//need to fix this so we are using recursion on small part 
+				//and iteration on larger part (to eliminate stackoverflow in large array)
+				
 				int pivot = getPivotIndex(array, low, high);
 				
 				quickSort(array, low, pivot - 1); // range before the pivot
@@ -459,7 +462,7 @@ public class SuperArray<Obj> {
 			}
 		}
 		catch (StackOverflowError sfe) {
-			System.err.println("Stack Over Flow: " + high + " is to large!");
+			System.err.println("QuickSort - Stack Over Flow: " + high + " is too large!");
 		}
 		
 	}

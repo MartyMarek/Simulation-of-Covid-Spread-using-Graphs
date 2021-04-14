@@ -193,7 +193,9 @@ public class IncidenceMatrix extends AbstractGraph
 	    			
 	    			khopResult.deleteAll(vertLabel);
 	    			
-	    			return khopResult.deDuplicate();
+	    			return khopResult.convertToStringArray();
+	    			
+	    			//return khopResult.deDuplicate();
 	    		}
 	    	}
 	    	else {
@@ -222,7 +224,7 @@ public class IncidenceMatrix extends AbstractGraph
     		//get each neighbour and add it
     		for (Edge e: edgeMap.keySet()) {
     			if(e.getSource().equals(vertLabel)) {
-    				result.add(e.getTarget());
+    				result.add(e.getTarget(), true); //will skip duplicates on add
     			}
     			
     		}
@@ -231,7 +233,7 @@ public class IncidenceMatrix extends AbstractGraph
     	if (k > 1) {
     		for (Edge e: edgeMap.keySet()) {
     			if(e.getSource().equals(vertLabel)) {
-    				result.add(e.getTarget());
+    				result.add(e.getTarget(), true);  //will skip duplicates on add
     				recursiveKhop(k - 1, e.getTarget(), result);
     			}
     			
