@@ -21,8 +21,8 @@ do
   cat k${i}inc.out >> final_khop_incmat.out
 done
 
-unix2dos final_khop_adjlist.out final_khop_adjlist.txt
-unix2dos final_khop_adjmat.out final_khop_adjmat.txt
-unix2dos final_khop_incmat.out final_khop_incmat.txt
+unix2dos final_khop_adjlist.out
+unix2dos final_khop_adjmat.out
+unix2dos final_khop_incmat.out
 
-ech "Simulation Complete"
+echo "Simulation Complete"
