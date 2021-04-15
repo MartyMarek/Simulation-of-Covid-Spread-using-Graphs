@@ -122,9 +122,7 @@ public final class DataGenerator {
 				}
 			}
 		}
-		
 		return edges;	
-		
 	}
 	
 	
@@ -142,7 +140,6 @@ public final class DataGenerator {
 			//insert string into array
 			list[i] = uniqueValue;
 		}
-		
 		return list;
 	}
 	
@@ -163,13 +160,12 @@ public final class DataGenerator {
 			
 			//we then add the vertex name to our randomly generated list
 			generated[i] = list[randomIndex];
-			
 		}
-		
 		return generated;
 	}
 	
 	
+	//this will allow the creation of input files for the model simulation 
 	public static void pickRandom(HashMap<String, Vertex> vertexMap, int amount, PrintWriter pw) {
 		Random rand = new Random(); //random numbers between 1 and the number of vertices (+1 for inclusive)
 		

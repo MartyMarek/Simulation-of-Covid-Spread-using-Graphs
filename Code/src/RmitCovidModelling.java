@@ -92,7 +92,16 @@ public class RmitCovidModelling
 				switch (command.toUpperCase()) {
 					
 					//The original commands remain the same, added new commands to cater for part B
-					//CUSTOM COMMANDS ("GR", "KNT")
+					//CUSTOM COMMANDS ("IN", "GR", "KNT", "KNTA", "AVT", "DVT", "AET", "DET")
+				
+					
+					case "IN":
+						//output general information about the graph
+						System.out.println("Information on current graph:");
+						System.out.println("Number of Vertices: " + ((AbstractGraph)graph).getVertexSize());
+						System.out.println("Number of Edges: " + ((AbstractGraph)graph).countEdges());
+						
+						break;
 				
 					// GR - Generate a list (of input size) of Random Vertices from the currently loaded graph
 					// GR {list size}
@@ -213,8 +222,9 @@ public class RmitCovidModelling
 																
 								long endTime = System.nanoTime(); 
 
-								outWriter.print("Time taken to add " + inputSize + " vertices to graph was: ");
-								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								//outWriter.print("Time taken to add " + inputSize + " vertices to graph was: ");
+								//outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9));
 								
 							}
 						}

@@ -103,7 +103,8 @@ public class AdjacencyList extends AbstractGraph
 	    				list.addNode(tarLabel); 
 	    			}
 	    			else {
-	    				System.err.println("This edge already exists!");
+	    				//ignore duplicate edges
+	    				//System.err.println("This edge already exists!");
 	    			}
 	    		}
 	    		
