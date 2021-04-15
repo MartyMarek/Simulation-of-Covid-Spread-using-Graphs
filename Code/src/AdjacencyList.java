@@ -23,6 +23,40 @@ public class AdjacencyList extends AbstractGraph
     	adjList = new SuperArray<LinkedList<String>>();
 
     } // end of AdjacencyList()
+    
+    public boolean isEdge(String srcLabel, String tarLabel) {
+    	
+    	if (srcLabel.equals(tarLabel)) {
+    		return false;
+    	}
+    	
+    	try {
+	    	//first we need to check that both labels exist
+	    	if (map.containsKey(srcLabel) && map.containsKey(tarLabel)) {
+	    		Vertex vertex = map.get(srcLabel);
+	    		if (vertex != null) {
+	    			//now we can find the linkedlist (Adj list for this vertex)
+	    			LinkedList<String> list = adjList.getObject(vertex.getIndexPointer());
+	    			
+	    			//check if the edge exists
+	    			if(list.find(tarLabel)) {
+	    				return true;
+	    			}
+	    		}
+	    	}
+	    	return false;
+	    	
+	    }
+		catch (NullPointerException npe) {
+			//something went wrong with accessing the linked list
+		}
+	    catch (Exception e) {
+	    	//Something else has gone wrong
+	    }
+    	
+    	return false;
+
+    }
 
     // complete
     public void addVertex(String vertLabel) {
@@ -39,7 +73,7 @@ public class AdjacencyList extends AbstractGraph
     	}
     	else {
     		//issue system error
-    		System.err.println("> Vertex does not exists!");
+    		System.err.println("> Vertex already exists!");
     	}
 
     } // end of addVertex()
@@ -67,6 +101,9 @@ public class AdjacencyList extends AbstractGraph
 	    			//now add the target label if it doesn't already exists
 	    			if(!list.find(tarLabel)) {
 	    				list.addNode(tarLabel); 
+	    			}
+	    			else {
+	    				System.err.println("This edge already exists!");
 	    			}
 	    		}
 	    		
@@ -292,5 +329,39 @@ public class AdjacencyList extends AbstractGraph
     	}
 
     } // end of printEdges()
+    
+  //returns the total number of edges of this graph
+    public int countEdges() {
+    	int edgeCount = 0;
+    	for (String n: map.keySet()) {
+    		LinkedList<String> printList = adjList.getObject(map.get(n).getIndexPointer());
+    		Node<String> printNode = printList.getHead();
+    		
+    		while (printNode != null) {
+    			edgeCount++;
+    			printNode = printNode.getNext();
+    		}
+    	}
+    	
+    	return edgeCount/2;
+    }
+    
+    public Edge[] getEdges() {
+    	//store edges for return
+    	Edge[] edgeList = new Edge[countEdges()*2];
+    	int index = 0;
+    	
+    	for (String n: map.keySet()) {
+    		LinkedList<String> printList = adjList.getObject(map.get(n).getIndexPointer());
+    		Node<String> printNode = printList.getHead();
+    		
+    		while (printNode != null) {
+    			edgeList[index++] = new Edge(n, printNode.getValue());
+    			printNode = printNode.getNext();
+    		}
+    	}
+    	
+    	return edgeList;
+    }
 
 } // end of class AdjacencyList

@@ -61,6 +61,26 @@ public class SuperArray<Obj> {
 		deletedIndexList = new LinkedList<Integer>();
 	}
 	
+	//counts the number of given object and returns count
+	public int getTotalValue(Obj obj) {
+		if (totalItems == 0) {
+			return 0;
+		}
+		
+		int itemCount = 0;
+		
+		for (int i = 0; i < array.length; i++) {
+			if (obj.equals(array[i])) {
+				itemCount++;
+			}
+			if (itemCount == totalItems) {
+				return itemCount;
+			}
+		}
+		
+		return itemCount;
+	}
+	
 	//this returns the index where the next element will be added to
 	//(including the indexes that are saved in the delete list
 	public int getCurrentIndexPointer() {

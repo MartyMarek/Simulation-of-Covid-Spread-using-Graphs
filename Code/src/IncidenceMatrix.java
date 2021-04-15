@@ -31,6 +31,24 @@ public class IncidenceMatrix extends AbstractGraph
     	incMatrix  = new SuperMatrix<Boolean>(); 
 
     } // end of IncidenceMatrix()
+    
+    //used to identify whether an edge already exists (used for testing)
+    public boolean isEdge(String srcLabel, String tarLabel) {
+    	if (srcLabel.equals(tarLabel)) {
+    		return false;
+    	}
+    	
+    	//make sure both vertices exists 
+    	if (map.containsKey(srcLabel) && map.containsKey(tarLabel) ) {
+    		Edge newEdge = new Edge(srcLabel, tarLabel);
+    		
+    		//then check if the edge exists..
+    		return edgeMap.containsKey(newEdge);
+    	}
+    	else {
+    		return false;
+    	}
+    }
 
 
     public void addVertex(String vertLabel) {
@@ -137,43 +155,45 @@ public class IncidenceMatrix extends AbstractGraph
     
     public void deleteVertex(String vertLabel) {
     	
-    	SuperArray<String> deletionList = new SuperArray<String>();
-    	
-    	//before deleting a vertex, we have to delete any edge that it is part of
-    	for (Edge  n: edgeMap.keySet()) {
-    		
-    		//get the row and column index for this edge
-    		int colIndex = edgeMap.get(n);
-    		Vertex vertex = map.get(vertLabel);
-    		int rowIndex = vertex.getIndexPointer();
-    		
-    		//check if that row/ column is set to true
-    		if (incMatrix.getObject(rowIndex, colIndex) != null) {
-    			if (incMatrix.getObject(rowIndex, colIndex)) {
-	    			//we can't delete edge inside the for loop as the returned edge 
-    				//list must stay the same until the loop ends.
-    				//we mark this edge for deletion later...
-    				deletionList.add(n.getTarget()); //mark this for edge deletion by saving it to a list
-	    			
-    			}
-    		}
+    	//check whether vertex exists first...
+    	if (map.containsKey(vertLabel)) {
+	    	SuperArray<String> deletionList = new SuperArray<String>();
+	    	
+	    	//before deleting a vertex, we have to delete any edge that it is part of
+	    	for (Edge  n: edgeMap.keySet()) {
+	    		
+	    		//get the row and column index for this edge
+	    		int colIndex = edgeMap.get(n);
+	    		Vertex vertex = map.get(vertLabel);
+	    		int rowIndex = vertex.getIndexPointer();
+	    		
+	    		//check if that row/ column is set to true
+	    		if (incMatrix.getObject(rowIndex, colIndex) != null) {
+	    			if (incMatrix.getObject(rowIndex, colIndex)) {
+		    			//we can't delete edge inside the for loop as the returned edge 
+	    				//list must stay the same until the loop ends.
+	    				//we mark this edge for deletion later...
+	    				deletionList.add(n.getTarget()); //mark this for edge deletion by saving it to a list
+	    			}
+	    		}
+	    	}
+
+	    	//de-dup the list : will return an exact sized array of de-duped values 
+	    	String[] list = deletionList.deDuplicate();
+	    	
+	    	//PLEASE NOTE: CHECK IF WE NEED TO DE-DUP (if not use below)
+	    	//String[] list = deletionList.convertToStringArray();
+	    	//now delete all the edges
+	    	for (int i = 0; i < list.length; i++) {
+	    		deleteEdge(vertLabel, list[i]);
+	    	}
+	    	
+	    	//once we have deleted all edges, we can delete the vertex row from the matrix
+	    	incMatrix.deleteRow(map.get(vertLabel).getIndexPointer());
+	    	
+	    	//finally delete the vertex from the map
+	    	map.remove(vertLabel);
     	}
-    	
-    	//de-dup the list : will return an exact sized array of de-duped values 
-    	String[] list = deletionList.deDuplicate();
-    	
-    	//PLEASE NOTE: CHECK IF WE NEED TO DE-DUP (if not use below)
-    	//String[] list = deletionList.convertToStringArray();
-    	//now delete all the edges
-    	for (int i = 0; i < list.length; i++) {
-    		deleteEdge(vertLabel, list[i]);
-    	}
-    	
-    	//once we have deleted all edges, we can delete the vertex row from the matrix
-    	incMatrix.deleteRow(map.get(vertLabel).getIndexPointer());
-    	
-    	//finally delete the vertex from the map
-    	map.remove(vertLabel);
     	
     } // end of deleteVertex()
 
@@ -256,5 +276,23 @@ public class IncidenceMatrix extends AbstractGraph
     		os.println(e.getSource() + " " + e.getTarget());
     	}
     } // end of printEdges()
+    
+    //returns the total number of edges of this graph
+    public int countEdges() {
+    	return edgeMap.size()/2;
+    }
+    
+    public Edge[] getEdges() {
+    	//store edges for return
+    	Edge[] edgeList = new Edge[countEdges()*2];
+    	int index = 0;
+    	
+    	for (Edge e: edgeMap.keySet()) {
+    		edgeList[index++] = new Edge(e.getSource(), e.getTarget());
+    	}
+    	
+    	return edgeList;
+    	
+    }
 
 } // end of class IncidenceMatrix

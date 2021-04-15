@@ -181,12 +181,9 @@ public class RmitCovidModelling
 								}
 								
 								System.out.println("Done.");
-								
 								//get the average time
 								totalTime = totalTime / inputSize;
-
 								outWriter.println("Average time taken for " + inputSize + " runs of khop depth " + k + " was: " + totalTime + " seconds");
-
 							}
 						}
 						else {
@@ -194,6 +191,145 @@ public class RmitCovidModelling
 						}
 						break;
 				
+					// AVT - add randomly generated vertices to the graph
+					// AVT {number of vertices to add}
+					case "AVT":
+						if (tokens.length == 2) {
+							int inputSize = Integer.parseInt(tokens[1]);
+							
+							if (inputSize < 1) {
+								printErrorMsg("Number of vertices to add should be 1 or greater!");
+							}
+							else {
+								//generate a list of vertex names of inputSize
+								String[] list = ((AbstractGraph)graph).generateRandomVertex(inputSize);
+								
+								//now measure how long it takes to add entire list
+								long startTime = System.nanoTime(); 
+								
+								for (int i = 0; i < list.length; i++) {
+									graph.addVertex(list[i]);
+								}
+																
+								long endTime = System.nanoTime(); 
+
+								outWriter.print("Time taken to add " + inputSize + " vertices to graph was: ");
+								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								
+							}
+						}
+						else {
+							printErrorMsg("incorrect number of tokens.");
+						}
+						break;
+						
+					case "DVT":
+						if (tokens.length == 2) {
+							int inputSize = Integer.parseInt(tokens[1]);
+							
+							if (inputSize < 1) {
+								printErrorMsg("Number of vertices to delete should be 1 or greater!");
+							}
+							else if (inputSize > ((AbstractGraph)graph).getVertexSize()) {
+								printErrorMsg("Number of vertices to delete should be less then the total vertices of the graph!");
+							}
+							else {
+								//generate a list of vertex names of inputSize
+								String[] randList = ((AbstractGraph)graph).randomListArray(inputSize);
+								
+								//now measure how long it takes to delete vertices 
+								long startTime = System.nanoTime(); 
+								
+								for (int i = 0; i < randList.length; i++) {
+									graph.deleteVertex(randList[i]);
+									System.out.println(randList[i]);
+								}
+																
+								long endTime = System.nanoTime(); 
+
+								outWriter.print("Time taken to delete " + inputSize + " vertices from graph was: ");
+								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								
+							}
+						}
+						else {
+							printErrorMsg("incorrect number of tokens.");
+						}
+						break;
+						
+					//AET to add provided number of random edges to the graph and time the process	
+					// AET {number of edges to add}	
+					case "AET":
+						if (tokens.length == 2) {
+							int inputSize = Integer.parseInt(tokens[1]);
+							
+							if (inputSize < 1) {
+								printErrorMsg("Number of edges to add should be 1 or greater!");
+							}
+							else if (!((AbstractGraph)graph).roomForEdges(inputSize)) {
+								//if we don't have enough free edges left in the graph based on the input size..
+								printErrorMsg("Not enough free edges left in this graph to add that amount - try lower.");
+							}
+							else {
+								//generate a list of edges based on inputSize 
+								Edge[] list = ((AbstractGraph)graph).generateRandomEdgeList(inputSize);
+								
+								//now measure how long it takes to add entire list
+								long startTime = System.nanoTime(); 
+								
+								for (int i = 0; i < list.length; i++) {
+									graph.addEdge(list[i].getSource(), list[i].getTarget());									
+								}
+																
+								long endTime = System.nanoTime(); 
+
+								outWriter.print("Time taken to add " + inputSize + " edges to graph was: ");
+								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+							}
+						}
+						else {
+							printErrorMsg("incorrect number of tokens.");
+						}
+						break;
+					
+					case "DET":
+						if (tokens.length == 2) {
+							int inputSize = Integer.parseInt(tokens[1]);
+							
+							if (inputSize < 1) {
+								printErrorMsg("Number of edges to delete should be 1 or greater!");
+							}
+							else if (((AbstractGraph)graph).countEdges() < inputSize) {
+								//can't delete more edges than we have..
+								printErrorMsg("Don't have that many edges to delete in this graph - try lower");
+							}
+							else {
+								//get existing set of edges 
+								Edge[] list = ((AbstractGraph)graph).pickRandomEdges(inputSize);
+								
+								//now measure how long it takes to delete entire list
+								long startTime = System.nanoTime(); 
+								
+								for (int i = 0; i < list.length; i++) {
+									graph.deleteEdge(list[i].getSource(), list[i].getTarget());
+									
+									System.out.println(list[i].getSource() + "  " + list[i].getTarget());
+									
+								}
+																
+								long endTime = System.nanoTime(); 
+
+								outWriter.print("Time taken to delete " + inputSize + " edges from graph was: ");
+								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								
+							}
+						}
+						else {
+							printErrorMsg("incorrect number of tokens.");
+						}
+						break;
+						
+						
 					// add vertex
 					case "AV":
 						if (tokens.length == 2) {

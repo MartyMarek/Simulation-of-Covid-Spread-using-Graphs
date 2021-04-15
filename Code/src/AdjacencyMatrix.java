@@ -27,6 +27,36 @@ public class AdjacencyMatrix extends AbstractGraph
     	adjMatrix  = new SuperMatrix<Boolean>(); // initial size of 10 x 10 will be created
     	
     } // end of AdjacencyMatrix()
+    
+    public boolean isEdge(String srcLabel, String tarLabel) {
+    	if (srcLabel.equals(tarLabel)) {
+
+    		return false;
+    	}
+        
+    	try {
+	    	//first we need to check that both labels exist
+	    	if (map.containsKey(srcLabel) && map.containsKey(tarLabel) ) {
+	    		Vertex sourceVertex = map.get(srcLabel);
+	    		Vertex targetVertex = map.get(tarLabel);
+	    		
+	    		//get the index pointers for both row and column
+	    		int sourceIndex = sourceVertex.getIndexPointer();
+	    		int targetIndex = targetVertex.getIndexPointer();
+	    		
+	    		return(adjMatrix.getObject(sourceIndex, targetIndex));
+	    		
+	    	}
+    	}
+    	catch (NullPointerException npe) {
+    		return false;
+    	}
+	    catch (Exception e) {
+	    	//Something else has gone wrong
+	    }
+    	return false;
+    	
+    }
 
     //complete
     public void addVertex(String vertLabel) {
@@ -129,6 +159,7 @@ public class AdjacencyMatrix extends AbstractGraph
 	    		
 	    		//for the adjacency matrix, we have to mirror the values
 	    		adjMatrix.setObject(targetIndex, sourceIndex, edge);
+
 	    	}
 	    	else {
 	    		//issue system error
@@ -324,65 +355,72 @@ private void recursiveHop(int k, String key, SuperArray<String> list) {
 
     } // end of printEdges()
     
-    /* MARKED FOR DELETION
-    private void recursiveHop(int k, String key, LinkedList<String> list) {
-    	
-    	if (k == 1) {
-    		
-    		//get the index 
-    		int rowIndex = map.get(key).getIndexPointer();
-    		
-    		//check the value of every column item to see if there is an edge
-    		for (String m: map.keySet()) {
-    			
-    			//exclude thyself
-    			if (!m.equals(key)) {
-    				
-    				int colIndex = map.get(m).getIndexPointer();
-    				
-	    			//now check for edges (avoid the null values in our matrix)
+    
+  //returns the total number of edges of this graph
+    public int countEdges() {
+    	int rowIndex = 0;
+		int colIndex = 0;
+    	int edgeCount = 0;
+		
+    	try {
+	    	for (String n: map.keySet()) {
+	    		
+	    		//get the index 
+	    		rowIndex = map.get(n).getIndexPointer();
+	    		
+	    		for (String m: map.keySet()) {
+	    			//get the index 
+	        		colIndex = map.get(m).getIndexPointer();
+	        		
+		        	//now check for edges (avoid the null values in our matrix)
 		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
-		    			//if the coordinate at this row an column contains true, then we have an edge
-		        		if(adjMatrix.getObject(rowIndex, colIndex)) {
-		    				//add to the linkedlist
-		        			list.addNode(m);
-	
-		    				}
-		        		}
-    				//}
-    				
-    			}
-    		}
-    		
-    	}
-    	
-    	else { //if k is higher than 1
-
-    		//get the index 
-    		int rowIndex = map.get(key).getIndexPointer();
-    		
-    		//check the value of every column item to see if there is an edge
-    		for (String m: map.keySet()) {
-    			
-    			//exclude thyself
-    			if (!m.equals(key)) {
-    				
-    				int colIndex = map.get(m).getIndexPointer();
-    				
-	    			//now check for edges (avoid the null values in our matrix)
-		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
-		    			//if the coordinate at this row an column contains true, then we have an edge
-		        		if(adjMatrix.getObject(rowIndex, colIndex)) {
-		    				//add to the linkedlist recursively 
-		        			list.addNode(m);
-		        			recursiveHop(k - 1, m, list);
+		    			if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    				edgeCount++;
 		    			}
-		        	}
-
-    			}
-    		}
+		    		}
+	    		}
+	    	}
+    	}
+    	catch (ArrayIndexOutOfBoundsException ae) {
+    		System.err.println("> Internal Array Access Error. BAD");
     	}
     	
-    } */
+    	return edgeCount/2;
+    }
+    
+    public Edge[] getEdges() {
+    	//store edges for return
+    	Edge[] edgeList = new Edge[countEdges()*2];
+    	int index = 0;
+    	
+    	int rowIndex = 0;
+		int colIndex = 0;
+    	
+    	try {
+	    	for (String n: map.keySet()) {
+	    		
+	    		//get the index 
+	    		rowIndex = map.get(n).getIndexPointer();
+	    		
+	    		for (String m: map.keySet()) {
+	    			//get the index 
+	        		colIndex = map.get(m).getIndexPointer();
+	        		
+		        	//now check for edges (avoid the null values in our matrix)
+		        	if(adjMatrix.getObject(rowIndex, colIndex) != null) {
+		    			if(adjMatrix.getObject(rowIndex, colIndex)) {
+		    				edgeList[index++] = new Edge(n, m);
+		    				
+		    			}
+		    		}
+	    		}
+	    	}
+    	}
+    	catch (ArrayIndexOutOfBoundsException ae) {
+    		System.err.println("> Internal Array Access Error. BAD");
+    	}
+    	
+    	return edgeList;
+    }
 
 } // end of class AdjacencyMatrix
