@@ -311,17 +311,13 @@ public class RmitCovidModelling
 								long startTime = System.nanoTime(); 
 								
 								for (int i = 0; i < list.length; i++) {
-									graph.deleteEdge(list[i].getSource(), list[i].getTarget());
-									
-									System.out.println(list[i].getSource() + "  " + list[i].getTarget());
-									
+									graph.deleteEdge(list[i].getSource(), list[i].getTarget());									
 								}
 																
 								long endTime = System.nanoTime(); 
 
 								outWriter.print("Time taken to delete " + inputSize + " edges from graph was: ");
 								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
-								
 							}
 						}
 						else {

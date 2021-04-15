@@ -176,7 +176,7 @@ public class AdjacencyList extends AbstractGraph
 	    			LinkedList<String> list = adjList.getObject(vertex.getIndexPointer());
 	    			
 	    			//delete the given edge from the linkedlist
-	    			list.deleteNode(srcLabel);	
+	    			list.deleteNode(srcLabel);	 			
 	    		}
 	    		
 	    	}

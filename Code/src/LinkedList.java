@@ -182,6 +182,11 @@ public class LinkedList<Obj> {
 			}
 			else {
 				prev.setNext(current.getNext()); // repoint the previous nodes link to this nodes next node
+				
+				//also set the tail if need be
+				if (prev.getNext() == null) {
+					tail = prev;
+				}
 				current.setNext(null); //setting this nodes next link to null will delete it from the list
 				current = null;
 			}
