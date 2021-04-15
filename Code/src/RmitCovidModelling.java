@@ -257,8 +257,9 @@ public class RmitCovidModelling
 																
 								long endTime = System.nanoTime(); 
 
-								outWriter.print("Time taken to delete " + inputSize + " vertices from graph was: ");
-								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								//outWriter.print("Time taken to delete " + inputSize + " vertices from graph was: ");
+								//outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9));
 								
 							}
 						}
@@ -293,8 +294,9 @@ public class RmitCovidModelling
 																
 								long endTime = System.nanoTime(); 
 
-								outWriter.print("Time taken to add " + inputSize + " edges to graph was: ");
-								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								//outWriter.print("Time taken to add " + inputSize + " edges to graph was: ");
+								//outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9));
 							}
 						}
 						else {
@@ -326,8 +328,9 @@ public class RmitCovidModelling
 																
 								long endTime = System.nanoTime(); 
 
-								outWriter.print("Time taken to delete " + inputSize + " edges from graph was: ");
-								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								//outWriter.print("Time taken to delete " + inputSize + " edges from graph was: ");
+								//outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9) + " seconds");
+								outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9));
 							}
 						}
 						else {
