@@ -1,0 +1,6 @@
+# knta 2 50
+Average time taken for 50 runs of khop depth 2 was: 0.00107311196 seconds
+# knta 3 50
+Average time taken for 50 runs of khop depth 3 was: 0.16607716492 seconds
+# knta 4 50
+Average time taken for 50 runs of khop depth 4 was: 10.077920828820002 seconds
