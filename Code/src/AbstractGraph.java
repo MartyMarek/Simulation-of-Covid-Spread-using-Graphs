@@ -18,14 +18,15 @@ public abstract class AbstractGraph implements ContactsGraph
 	//create the map here as every type of graph will use this
 	protected HashMap<String, Vertex> map;
 	
-	//keeps track of the total number of edges this graph contains 
-	//protected int numOfEdges;
+	//keeps track of the total infections throughout the history of the graph
+	//Please note: this isn't the current total infection, rather the total ever!
+	protected int totalInfections;
 	
 	//default constructor
 	public AbstractGraph() {
 		map = new HashMap<String, Vertex>();
 		
-		//numOfEdges = 0;
+		totalInfections = 0;
 		
 	}
 	
@@ -160,6 +161,7 @@ public abstract class AbstractGraph implements ContactsGraph
 		for (int i = 0; i < newlyInfected.length; i++) {
 			//get the vertex from the map and toggle its state
 			map.get(newlyInfected[i]).toggleState();
+			totalInfections++;
 		}
 		
 		String[] newlyRecovered = sList.getRecovered();
@@ -214,6 +216,10 @@ public abstract class AbstractGraph implements ContactsGraph
 	
 	public HashMap<String, Vertex> getMap() {
 		return map;
+	}
+	
+	public int getTotalInfections() {
+		return totalInfections;
 	}
 	
 } // end of abstract class AbstractGraph

@@ -126,6 +126,10 @@ public class IncidenceMatrix extends AbstractGraph
     		//check if the vertex exists.
         	if (map.containsKey(vertLabel)) {
         		map.get(vertLabel).toggleState();
+        		//increase the total infected if we hit an infection
+        		if (map.get(vertLabel).getState() == SIRState.I) {
+        			totalInfections++;
+        		}
         	}
         	else {
         		//issue system error

@@ -1,4 +1,5 @@
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -180,9 +181,6 @@ public final class DataGenerator {
 				found = false;
 				i--;
 			}
-
-			//reset found
-			
 		}
 		
 		return generated;
@@ -208,21 +206,20 @@ public final class DataGenerator {
 		String startVertex = null;
 		
 		//counts how many khops are required to reach out total infections..
-		int khops = 0;
-		
+		int khops = 0;	
 		
 		//if we want only one cluster of infections as a starting point,
 		//that also has enough neighbours to meet the total infections criteria..
 		if(connected) {
 			
-			//hashmap is already in random order..
-			for (String n: graph.getMap().keySet()) {
-				
-				khops = graph.howManyKhops(infections - 1, n);
+			String[] randomList = pickRandom(graph.getMap(), graph.getMap().size());
+			
+			for (int i = 0; i < randomList.length; i++) {
+				khops = graph.howManyKhops(infections - 1, randomList[i]);
 				
 				if (khops > 0) {
 					//we have found a random vertex with enough neighbours..
-					startVertex = n;
+					startVertex = randomList[i];
 					break;
 				}
 			}
@@ -233,7 +230,7 @@ public final class DataGenerator {
 				return;
 			}
 				
-			//add the starting vertex to our list 
+			//if we did find one then add the starting vertex to our list 
 			infectionList.add(startVertex);
 
 			//once we know how many hops we need to take, record neighbours inside out (Breadth first)
@@ -269,7 +266,7 @@ public final class DataGenerator {
 		}
 
 		//now we write this all out to the printwriter (the -o file)
-		pw.print("SIR ");
+		pw.print("SIRT ");   // "SIRT" is the timed version of the SIR command
 		
 		//now loop through our list
 		for (int i = 0; i < randomInfectionList.length; i++) {
@@ -288,38 +285,5 @@ public final class DataGenerator {
 		pw.println("Q");
 
 	}
-	
-	/* MARKED FOR DELETION */
-	/*
-	//this will allow the creation of input files for the model simulation 
-	public static void pickRandom(HashMap<String, Vertex> vertexMap, int amount, PrintWriter pw) {
-		Random rand = new Random(); //random numbers between 1 and the number of vertices (+1 for inclusive)
-		
-		//create an array of vertices from our map
-		String[] list = vertexMap.keySet().toArray(new String[vertexMap.keySet().size()]);
-		
-		//this will store our randomly generated vertex names 
-		String[] generated = new String[amount];
-		
-		int randomIndex;
-		
-		//now generate index numbers between 0 and the length of the array (exclusive)
-		for (int i = 0; i < amount; i++) {
-			randomIndex = rand.nextInt(list.length);
-			
-			//we then add the vertex name to our randomly generated list
-			generated[i] = list[randomIndex];
-			
-		}
-		
-		//we now have our random list, so write out (Save to a specific file)
-		for (int i = 0; i < generated.length; i++) {
-			
-			//OUTPUT HERE WILL DEPEND ON THE TEST FILE NEEDED
-			
-			pw.println(generated[i]);
-		}
-		
-	} */
 
 }
