@@ -106,14 +106,32 @@ public class RmitCovidModelling
 					// GR - Generate a list (of input size) of Random Vertices from the currently loaded graph
 					// GR {list size}
 					case "GR":
-						if (tokens.length == 2) {
-							int n = Integer.parseInt(tokens[1]);
-							if (n < 1) {
+						if (tokens.length == 5) {
+							int total = Integer.parseInt(tokens[1]);
+							float infP = Float.parseFloat(tokens[2]);
+							float recP = Float.parseFloat(tokens[3]);
+							
+							boolean connected = false;
+														
+							if (total < 1) {
 								printErrorMsg("Should be 1 or greater");
 							}
-							else {
-								((AbstractGraph)graph).randomList(n, outWriter);
+							else if (total >= 10000) {
+								printErrorMsg("Are you crazy? Try again..");
 							}
+							else if ( (infP > 1.0 || infP < 0.0) || (recP > 1.0 || recP < 0.0) ) {
+								printErrorMsg("Probabilities need to be between 0.0 and 1.0");
+							}
+							else if (!(tokens[4].equalsIgnoreCase("c") || tokens[4].equalsIgnoreCase("r"))) {
+								printErrorMsg("Input format is GR {infections} {infection probability} {recovery probability} {c|r}");
+							}
+							else { //if we pass all those hurdles..
+								if (tokens[4].equalsIgnoreCase("c")) {
+									connected = true;
+								}
+								((AbstractGraph)graph).generateDataFile(total, infP, recP, connected,  outWriter);
+							}
+		
 						}
 						else {
 							printErrorMsg("incorrect number of tokens.");

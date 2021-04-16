@@ -189,6 +189,108 @@ public final class DataGenerator {
 	}
 	
 	
+	public static void generateSimulationFile(AbstractGraph graph, int infections, 
+												float infProb, float recProb, boolean connected, PrintWriter pw) {
+		
+		//must call this method with minimum 1
+		if (infections < 1) {
+			System.err.println("Must specify minimum 1 for infection to generate file.");
+			return;
+		}
+		
+		//used to store a non-connected random set of vertices for infection
+		String[] randomInfectionList = new String[infections];
+		
+		//used to store a connected vertex and its neighbours for infection
+		SuperArray<String> infectionList = new SuperArray<String>();
+		
+		//stores the label for the starting vertex for connected infection
+		String startVertex = null;
+		
+		//counts how many khops are required to reach out total infections..
+		int khops = 0;
+		
+		
+		//if we want only one cluster of infections as a starting point,
+		//that also has enough neighbours to meet the total infections criteria..
+		if(connected) {
+			
+			//hashmap is already in random order..
+			for (String n: graph.getMap().keySet()) {
+				
+				khops = graph.howManyKhops(infections - 1, n);
+				
+				if (khops > 0) {
+					//we have found a random vertex with enough neighbours..
+					startVertex = n;
+					break;
+				}
+			}
+			
+			//if we didn't find a vertex, then exit
+			if (startVertex == null) {
+				System.err.println("There are no vertices with enough neighbours to fill the total infections specified");
+				return;
+			}
+				
+			//add the starting vertex to our list 
+			infectionList.add(startVertex);
+
+			//once we know how many hops we need to take, record neighbours inside out (Breadth first)
+			for(int i = 1; i <= khops; i++) {
+				String[] klist = graph.kHopNeighbours(i, startVertex);
+				
+				for (int j = 0; j < klist.length; j++) {
+					infectionList.add(klist[j], true); //skip duplicate additions
+					
+					//if we have reached out target number then finish
+					if(infectionList.getTotalItems() == infections) {
+						break;
+					}
+				}
+			}
+			
+			//now assign our temp list to the final list to write to the file
+			randomInfectionList = infectionList.convertToStringArray();
+			
+		}
+		else {
+			//for non-connected infections (random throughout the graph)
+			
+			//check if we have enough vertices to meet the infection criteria
+			if (graph.getVertexSize() < infections) {
+				System.err.println("There are no vertices in the graph to meet the total infections.");
+				return;
+			}
+			
+			//generate random set of vertices (no duplicates)
+			randomInfectionList = pickRandom(graph.getMap(), infections);
+			
+		}
+
+		//now we write this all out to the printwriter (the -o file)
+		pw.print("SIR ");
+		
+		//now loop through our list
+		for (int i = 0; i < randomInfectionList.length; i++) {
+			if (i == 0) {
+				pw.print(randomInfectionList[i]);
+			}
+			else {
+				pw.print(";" + randomInfectionList[i]);
+			}	
+		}
+		
+		//now add the probabilities..
+		pw.println(" " + infProb + " " + recProb);
+		
+		//finish file with the quit command 
+		pw.println("Q");
+
+	}
+	
+	/* MARKED FOR DELETION */
+	/*
 	//this will allow the creation of input files for the model simulation 
 	public static void pickRandom(HashMap<String, Vertex> vertexMap, int amount, PrintWriter pw) {
 		Random rand = new Random(); //random numbers between 1 and the number of vertices (+1 for inclusive)
@@ -218,6 +320,6 @@ public final class DataGenerator {
 			pw.println(generated[i]);
 		}
 		
-	}
+	} */
 
 }

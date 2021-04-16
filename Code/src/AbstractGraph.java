@@ -39,6 +39,52 @@ public abstract class AbstractGraph implements ContactsGraph
 	public abstract Edge[] getEdges();
 	
 	
+	//returns the number of khops it takes to reach the total provided 
+	//if there are not enough neighbours to reach the total 0 is returned. 
+	public int howManyKhops(int total, String start) {
+		
+		if (!map.containsKey(start)) {
+    		//issue system error
+    		System.err.println("> Vertex does not exists!");
+    		return 0;
+		}
+		else {
+		
+			boolean enough = false;
+			int khops = 1; //start with 1 khop to see if we have enough neighbours..
+			String[] neighbours;
+			
+			//we need to compare each khop to see if we have reached 
+			//a plateau (no more vertices can be reached)
+			int prev = 0;
+			
+			
+			while (!enough) {
+				neighbours = kHopNeighbours(khops, start);
+				
+				//if the length of the neighbour list is larger than the total we need
+				//we found the number of khops needed to reach total..
+				if (neighbours.length >= total) {
+					return khops;
+				}
+				//if the previous set of neighbours was the same as this one, we can't advance anymore
+				else if (prev >= neighbours.length) {  
+					return 0;
+				}
+				else { //we are not quite there yet..
+					prev = neighbours.length;
+					khops++;
+				}
+
+			}
+			
+			return 0;
+			
+		}
+		
+		
+	}
+	
 	//this method tells us whether the graph is complete (no more edges can be added)
 	public boolean isComplete() {
 		int vertexCount = map.size();
@@ -136,13 +182,7 @@ public abstract class AbstractGraph implements ContactsGraph
     		throw new NullPointerException("Vertex doesn't exists");
     	}
 	}
-	
-
-	//uses the data generator to create a random list of vertices from our map of vertices 
-	public void randomList(int size, PrintWriter pw) {
-		DataGenerator.pickRandom(map, size, pw);
-	}
-	
+			
 	public String[] randomListArray(int size) {
 		return DataGenerator.pickRandom(map, size);
 	}
@@ -159,6 +199,12 @@ public abstract class AbstractGraph implements ContactsGraph
 	public Edge[] pickRandomEdges(int amount)
 	{
 		return DataGenerator.randomExistingEdges(this, amount);
+	}
+	
+	public void generateDataFile(int infections, float infProb, float recProb, 
+									boolean connected, PrintWriter pw) {
+		
+		DataGenerator.generateSimulationFile(this, infections, infProb, recProb, connected, pw);
 	}
 	
 	
