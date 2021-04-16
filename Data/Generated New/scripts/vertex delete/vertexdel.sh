@@ -2,7 +2,7 @@
 
 for (( i = 1; i <= 27; i++ ))
 do
-  for (( j = 1 ; j <= 27; j++ ))
+  for (( j = 1 ; j <= 5; j++ ))
   do
     java -cp .:jopt-simple-5.0.2.jar RmitCovidModelling -f sf${i}.net -o sf-k${i}-${j}list.vout adjlist < vertexdel.dat
     java -cp .:jopt-simple-5.0.2.jar RmitCovidModelling -f sf${i}.net -o sf-k${i}-${j}mat.vout adjmat < vertexdel.dat
