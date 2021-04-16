@@ -390,7 +390,7 @@ private void recursiveHop(int k, String key, SuperArray<String> list) {
     
     public Edge[] getEdges() {
     	//store edges for return
-    	Edge[] edgeList = new Edge[countEdges()*2];
+    	Edge[] edgeList = new Edge[(countEdges()*2)+1];
     	int index = 0;
     	
     	int rowIndex = 0;

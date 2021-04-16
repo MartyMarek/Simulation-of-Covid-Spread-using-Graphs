@@ -349,7 +349,7 @@ public class AdjacencyList extends AbstractGraph
     
     public Edge[] getEdges() {
     	//store edges for return
-    	Edge[] edgeList = new Edge[countEdges()*2];
+    	Edge[] edgeList = new Edge[(countEdges()*2)+1];
     	int index = 0;
     	
     	for (String n: map.keySet()) {
