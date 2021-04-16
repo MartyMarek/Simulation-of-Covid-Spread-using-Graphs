@@ -252,7 +252,6 @@ public class RmitCovidModelling
 								
 								for (int i = 0; i < randList.length; i++) {
 									graph.deleteVertex(randList[i]);
-									System.out.println(randList[i]);
 								}
 																
 								long endTime = System.nanoTime(); 

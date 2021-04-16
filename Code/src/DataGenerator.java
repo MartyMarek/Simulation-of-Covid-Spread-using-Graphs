@@ -146,6 +146,10 @@ public final class DataGenerator {
 	public static String[] pickRandom(HashMap<String, Vertex> vertexMap, int amount) {
 		Random rand = new Random(); //random numbers between 1 and the number of vertices (+1 for inclusive)
 		
+		//this tracks whether the random number we generate is already in our list
+		//(we want unique numbers for each generation)
+		boolean found = false;
+		
 		//create an array of vertices from our map
 		String[] list = vertexMap.keySet().toArray(new String[vertexMap.keySet().size()]);
 		
@@ -158,9 +162,29 @@ public final class DataGenerator {
 		for (int i = 0; i < amount; i++) {
 			randomIndex = rand.nextInt(list.length);
 			
-			//we then add the vertex name to our randomly generated list
-			generated[i] = list[randomIndex];
+			//check if this new random number already exists..
+			for (int j = 0; j < generated.length; j++) {
+				if (generated[j] != null) {
+					if (generated[j].equals(list[randomIndex])) {
+						found = true;
+						break;
+					}
+				}
+			}
+			//if the random generated value is unique
+			if (!found) {
+				//then we can add it to our list
+				generated[i] = list[randomIndex];
+			}
+			else { //if the value already exists try again..
+				found = false;
+				i--;
+			}
+
+			//reset found
+			
 		}
+		
 		return generated;
 	}
 	
