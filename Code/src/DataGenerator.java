@@ -1,5 +1,4 @@
 import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -188,7 +187,8 @@ public final class DataGenerator {
 	
 	
 	public static void generateSimulationFile(AbstractGraph graph, int infections, 
-												float infProb, float recProb, boolean connected, PrintWriter pw) {
+												float infProb, float recProb, boolean connected, 
+													PrintWriter pw, String command) {
 		
 		//must call this method with minimum 1
 		if (infections < 1) {
@@ -266,7 +266,7 @@ public final class DataGenerator {
 		}
 
 		//now we write this all out to the printwriter (the -o file)
-		pw.print("SIRT ");   // "SIRT" is the timed version of the SIR command
+		pw.print(command + " ");   // "SIRT" is the timed version of the SIR command, SIRI is the iteration version
 		
 		//now loop through our list
 		for (int i = 0; i < randomInfectionList.length; i++) {

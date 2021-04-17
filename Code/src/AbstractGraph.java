@@ -204,9 +204,9 @@ public abstract class AbstractGraph implements ContactsGraph
 	}
 	
 	public void generateDataFile(int infections, float infProb, float recProb, 
-									boolean connected, PrintWriter pw) {
+									boolean connected, PrintWriter pw, String command) {
 		
-		DataGenerator.generateSimulationFile(this, infections, infProb, recProb, connected, pw);
+		DataGenerator.generateSimulationFile(this, infections, infProb, recProb, connected, pw, command);
 	}
 	
 	
