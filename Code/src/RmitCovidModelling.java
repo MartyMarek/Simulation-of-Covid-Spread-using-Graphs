@@ -377,6 +377,28 @@ public class RmitCovidModelling
 
 						break;
 						
+					//SIR command that records rate of increase per iteration
+					case "SIRI":
+						outWriter.println("# " + line);
+						if (tokens.length == 4) {
+							String[] seedVertices = tokens[1].split(";");
+							float infectionProb = Float.parseFloat(tokens[2]);
+							float recoverProb = Float.parseFloat(tokens[3]);
+
+							long startTime = System.nanoTime();
+							
+							sirModel.runIterationSimulation(graph, seedVertices, infectionProb, recoverProb, outWriter);
+							
+							long endTime = System.nanoTime(); 
+							outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9));
+							outWriter.println(((AbstractGraph)graph).getTotalInfections() + " + starting number of infections");
+						}
+						else {
+							printErrorMsg("incorrect number of tokens.");
+						}
+
+						break;
+						
 					// add vertex
 					case "AV":
 						if (tokens.length == 2) {
