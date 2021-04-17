@@ -1,4 +1,4 @@
-Simluation C -
+Simulation C -
 
 Simulates three(3) cluster infected vertex across the following combinations of probabilities:
 infection 25% recovery 25%
