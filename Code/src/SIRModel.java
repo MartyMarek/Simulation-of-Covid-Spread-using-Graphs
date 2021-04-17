@@ -104,6 +104,10 @@ public class SIRModel
         	//when this is set to true we stop the simulation
         	boolean stopCondition = false;
         	
+        	//used to output information about this graph
+        	int vertexSize = ((AbstractGraph)graph).getVertexSize();
+    		int edgeSize = ((AbstractGraph)graph).countEdges();
+        	
         	//keep looping while our stop conditions have not been met
         	while (!stopCondition) {
 
@@ -116,11 +120,11 @@ public class SIRModel
         		//commits changes to our graph from above generated lists. 
         		((AbstractGraph)graph).updateGraph(sList);
         		
-        		//sirModelOutWriter.print(counter + ": ");
+        		int currentTotalInfections = ((AbstractGraph)graph).getTotalInfections() + seedVertices.length;
         		
-        		//printStep(sList, sirModelOutWriter);
-        		
-        		sirModelOutWriter.println(sList.getNewlyInfectedTotal() + " " + sList.getNewlyRecoveredTotal());
+        		//provides a comma delimited file with current iteration number, total infections, new infections, new recovery 
+        		sirModelOutWriter.println(vertexSize + "," + edgeSize + "," + counter +"," + currentTotalInfections + "," 
+        										+  sList.getNewlyInfectedTotal() + "," + sList.getNewlyRecoveredTotal());
         		
         		//stop condition - if there are no changes to both newly infected and newly recovered..
         		if (sList.getNewlyInfectedTotal() == 0 && sList.getNewlyRecoveredTotal() == 0) {

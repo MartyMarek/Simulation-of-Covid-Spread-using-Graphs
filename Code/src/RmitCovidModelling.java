@@ -92,7 +92,7 @@ public class RmitCovidModelling
 				switch (command.toUpperCase()) {
 					
 					//The original commands remain the same, added new commands to cater for part B
-					//CUSTOM COMMANDS ("IN", "GR", "KNT", "KNTA", "AVT", "DVT", "AET", "DET")
+					//CUSTOM COMMANDS ("IN", "GR", "KNT", "KNTA", "AVT", "DVT", "AET", "DET", SIRT, SIRI)
 				
 					
 					case "IN":
@@ -170,8 +170,8 @@ public class RmitCovidModelling
 						}
 						break;
 					
-						//KNT - khop with a time measurement with given khop depth and vertex name 
-						// KNT {khop depth} {starting vertex name}
+					//KNT - khop with a time measurement with given khop depth and vertex name 
+					// KNT {khop depth} {starting vertex name}
 					case "KNT":
 						outWriter.println("# " + line);
 						if (tokens.length == 3) {
@@ -411,19 +411,19 @@ public class RmitCovidModelling
 						
 					//SIR command that records rate of increase per iteration
 					case "SIRI":
-						outWriter.println("# " + line);
+						//outWriter.println("# " + line);
 						if (tokens.length == 4) {
 							String[] seedVertices = tokens[1].split(";");
 							float infectionProb = Float.parseFloat(tokens[2]);
 							float recoverProb = Float.parseFloat(tokens[3]);
 
-							long startTime = System.nanoTime();
+							//long startTime = System.nanoTime();
 							
 							sirModel.runIterationSimulation(graph, seedVertices, infectionProb, recoverProb, outWriter);
 							
-							long endTime = System.nanoTime(); 
-							outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9));
-							outWriter.println(((AbstractGraph)graph).getTotalInfections() + " + starting number of infections");
+							//long endTime = System.nanoTime(); 
+							//outWriter.println(((double)(endTime - startTime)) / Math.pow(10, 9));
+							//outWriter.println(((AbstractGraph)graph).getTotalInfections() + " + starting number of infections");
 						}
 						else {
 							printErrorMsg("incorrect number of tokens.");

@@ -1,6 +1,6 @@
 Simluation D -
 
-Simulates five (5) cluster infected vertices across the following combinations of probabilities:
+Simulates five (5) randomly infected vertices across the following combinations of probabilities:
 infection 25% recovery 25%
 infection 25% recovery 50%
 infection 25% recovery 75%
