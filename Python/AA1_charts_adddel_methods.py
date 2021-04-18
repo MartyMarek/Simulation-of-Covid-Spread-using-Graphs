@@ -44,9 +44,11 @@ for g in generator:
             ax.set_xticklabels(xlabel, rotation=45, fontsize=8)
             plt.title(g + " - " + type.capitalize() + " " + operator.capitalize())
             plt.legend(method_name)
+            # plt.yscale('log')
             plt.ylabel("Seconds")
             plt.xlabel("Graph Size (Vertice / Degrees)")
 
             save_path = "charts/adddel_by_method/" + g + "_" + type + "_" + operator + "_chart"
+            # save_path = "charts/adddel_by_method/log_scale/" + g + "_" + type + "_" + operator + "_chart"
             plt.savefig(save_path, bbox_inches='tight')
             #plt.show()
