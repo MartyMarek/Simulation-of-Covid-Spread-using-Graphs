@@ -23,7 +23,7 @@ df_avr_results.index.get_level_values(0)
 
 # Set up various lists and variables for iteration.  
 xlabel = ['500v 2d', '500v 8d', '500v 16d', '5000v 2d', '5000v 8d', '5000v 16d', '10000v 2d', '10000v 8d', '10000v 16d']
-method_name = ["Adjacency List", "Adjacency Matrix", "Incident Matrix"]
+method_name = ["Adjacency List", "Adjacency Matrix", "Incidence Matrix"]
 method_code = ["adjlist", "adjmat", "incmat"]
 generator = ["Erdos Renyi", "Scale Free"]
 width = 0.28
